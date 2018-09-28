@@ -1,0 +1,31 @@
+<!--miniprogram/pages/user/edit/edit.wxml-->
+<view class="container has-fixed-bottom">
+  <form class="form-info">
+    <view class='input-item'>
+      <text class="input-item-label">用户名</text>
+      <input type="text" id="username" class="input-item-text" placeholder='输入用户名' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">密码</text>
+      <input type="password" id="password" class="input-item-text" placeholder='输入密码' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">类型</text>
+      <picker class="input-item-text" bindchange='bindTypeChange' value="{{formData.type}}" range="{{userType}}">
+        <view class="picker">
+          {{userType[formData.type]}}
+        </view>
+      </picker> 
+      <i class="input-icon iconfont icon-unfold"></i>
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">备注</text>
+      <input type="text" id="remark" class="input-item-text" placeholder='备注' bindblur="onBlur" />
+    </view>
+  </form>
+  <view class="btn-box">
+    <button class="btn" bindtap="submitData">提交</button>
+  </view>
+</view>
+
+

@@ -1,0 +1,23 @@
+<!--miniprogram/pages/user/list/list.wxml-->
+<view class="container">
+  <view class="table">
+    <view class="tr head">
+      <view class="th">用户名</view>
+      <view class="th">账户类型</view>
+      <view class="th">操作</view>
+    </view>
+    <block wx:for="{{userlist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item.id}}">
+      <view class="tr">
+        <view class="td">{{item.username}}</view>
+        <view class="td">
+          <text wx:if="{{item.type === 1}}">管理员</text>
+          <text wx:if="{{item.type !== 1}}">普通用户</text>
+        </view>
+        <view class="td">
+          <button class="btn t-btn" id="{{item.id}}" catchtap="delete">删除</button>
+          <button class="btn t-btn" id="{{item.id}}" catchtap='edit'>编辑</button>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

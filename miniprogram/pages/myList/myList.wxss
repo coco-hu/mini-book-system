@@ -1,0 +1,79 @@
+/* miniprogram/pages/myList/myList.wxss */
+.user-info {
+  padding: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #FFF;
+  border-bottom: 1px solid #F0F0F0;
+}
+.user-info .user-logo {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  margin-right: 14px;
+  vertical-align: top;
+}
+.user-info .user-logo img {
+  width: 100%;
+  height: 100%;
+}
+.user-info .user-text{
+  display: inline-block;
+  line-height: 30px;
+  height: 60px;
+}
+.user-info .user-text .txt01 {
+  display: block;
+}
+.user-info .user-text .txt02 {
+  display: block;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  text-align: center;
+  line-height: 24px;
+  padding: 4px 14px;
+  margin-bottom: 14px;
+  background: #FFF;
+  border-bottom: 1px solid #e8e8e8;
+}
+.summary-list .data {
+  color: #000;
+  font-weight: bolder;
+  display: block;
+}
+.summary-list .summary {
+  display: block;
+}
+.my-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #FFF;
+  border-top:1psx solid #e8e8e8;
+  margin-bottom: 14px;
+}
+
+.my-list .item{
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 14px;
+  border-bottom: 1px solid #F0F0F0;
+}
+.my-list .item .icon {
+  margin-right: 14px;
+  font-size: 18px;
+  height: 40px;
+  vertical-align: bottom;
+  display: inline-block;
+}
+.my-list .item .arrow {
+  position:absolute;
+  right:12px;
+  color:#888;
+}

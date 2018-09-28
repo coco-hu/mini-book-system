@@ -1,0 +1,6 @@
+<!--miniprogram/pages/scan/scan.wxml-->
+
+
+  <view   class="view" style=" top:{{top}}px;left:{{left}}px;margin: 0 0rpx 0rpx 0%;" bindtouchmove="setTouchMove">
+  <image style="height:40px;width:40px;" src="/images/Ings.png"></image>
+</view>

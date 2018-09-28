@@ -1,0 +1,38 @@
+<!--miniprogram/pages/book/detail/detail.wxml-->
+<view class="container has-fixed-bottom">
+  <!-- <view class="title">{{book.title}}</view> -->
+  <view class="book">
+    <image class="img" src="{{book.image}}" />
+    <view class="info">
+      <view><text class="txt01">作者：</text>{{book.author}}</view>
+      <view><text class="txt01">译者：</text>{{book.translator}}</view>
+      <view><text class="txt01">出版社：</text>{{book.publisher}}</view>
+      <view><text class="txt01">ISBN：</text>{{book.isbn}}</view>
+      <view><text class="txt01">书架位置：</text>{{book.place}}</view>
+      <view class="available">
+        <text class="txt01">当前可借数量：</text>
+        <text class="green" wx:if="{{book.available_num > 0}}">{{book.available_num}}</text>
+        <text class="red" wx:if="{{book.available_num == 0}}">0</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="sections">
+    <view class="sec-title">内容简介</view>
+    <view class="content">{{book.content_intro}}</view>
+  </view>
+
+  <view class="sections">
+    <view class="sec-title">作者简介</view>
+    <view class="content">{{book.author_intro}}</view>
+  </view>
+
+  <view class="sections">
+    <view class="sec-title">目录</view>
+    <view class="content">{{book.catalog}}</view>
+  </view>
+
+  <view class="btn-box">
+    <button class="btn" bindtap="borrowBook">借阅</button>
+  </view>
+</view>

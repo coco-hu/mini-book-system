@@ -1,0 +1,45 @@
+.table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.tr {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  height: 44px;
+  line-height: 18px;
+}
+.tr:nth-child(odd){
+  background-color: #f0f6ff;
+}
+.tr:nth-child(even){
+  background-color: #FFF;
+}
+.tr.head {
+  background-color: #6CA6CD;
+}
+.td, .th{
+  width: 100%;
+  text-align: center;
+}
+.td .txt01 {
+  display: block;
+}
+.td .txt02 {
+  display: block;
+  font-size: 12px;
+  color:gray;
+}
+
+.table .t-btn {
+  width:42px;
+  height:28px;
+  padding:0;
+  display:inline-block;
+  font-size:13px;
+  line-height:28px;
+  margin-left: 6px;
+  margin-top: 5px;
+}

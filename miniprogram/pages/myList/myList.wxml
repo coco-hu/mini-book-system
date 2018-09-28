@@ -1,0 +1,90 @@
+<!--miniprogram/pages/myList/myList.wxml-->
+<view class="container">
+  <view class="user-info">
+    <view class="user-logo">
+      <img src="{{avatarUrl}}" />
+    </view>
+    <view class="user-text">
+      <text class="txt01">coco</text>
+      <text class="txt02">test</text>
+    </view>
+  </view>
+
+
+  <view class="summary-list">
+    <view>
+      <text class="data">1</text>
+      <text class="summary">借阅</text>
+    </view>
+    <view>
+      <text class="data">2</text>
+      <text class="summary">待还</text>
+    </view>
+    <view>
+      <text class="data">3</text>
+      <text class="summary">预约</text>
+    </view>
+    <view>
+      <text class="data">3</text>
+      <text class="summary">推荐</text>
+    </view>
+  </view>
+
+
+  <view class="my-list">
+    <view class="item" id="current" bindtap="toPage">
+      <em class="icon iconfont icon-ziyuan green"></em>
+      <text class="txt">当前借阅</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="history" bindtap="toPage">
+      <em class="icon iconfont icon-time green"></em>
+      <text class="txt">历史借阅</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+  </view>
+
+  <view class="my-list">
+    <view class="item" id="order" bindtap="toPage">
+      <em class="icon iconfont icon-flag_fill yellow"></em>
+      <text class="txt">我的预约</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="recommend" bindtap="toPage">
+      <em class="icon iconfont icon-like yellow"></em>
+      <text class="txt">我的推荐</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+  </view>
+
+  <view class="my-list">
+    <view class="item" id="book-management" bindtap="toPage">
+      <em class="icon iconfont icon-ziliaoshouce-xianxing orange"></em>
+      <text class="txt">图书管理</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="user-management" bindtap="toPage">
+      <em class="icon iconfont icon-group orange"></em>
+      <text class="txt">用户管理</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+  </view>
+
+  <view class="my-list">
+    <view class="item" id="recommend-list" bindtap="toPage">
+      <em class="icon iconfont icon-danju-xianxing dark-orange"></em>
+      <text class="txt">用户推荐</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="shopping-list" bindtap="toPage">
+    <em class="icon iconfont icon-shangpin-xianxing dark-orange"></em>
+      <text class="txt">购书历史</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="overdue-list" bindtap="toPage">
+    <em class="icon iconfont icon-301 red"></em>
+      <text class="txt">逾期图书</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+  </view>
+</view>

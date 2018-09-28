@@ -1,0 +1,5 @@
+<!--miniprogram/pages/index/index.wxml-->
+<view class="container">
+  <!-- 搜索 -->
+  <input type="text" class="search-input" confirm-type='search' maxlength='20' auto-focus placeholder='书名/作者/ISBN' bindconfirm='onSearch' />
+</view>

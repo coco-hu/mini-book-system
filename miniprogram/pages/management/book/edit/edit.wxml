@@ -1,0 +1,57 @@
+<!--miniprogram/pages/book/edit/edit.wxml-->
+<view class="container has-fixed-bottom">
+  <form class="form-info">
+    <view class='input-item'>
+      <text class="input-item-label">ISBN</text>
+      <input type="text" id="isbn" class="input-item-text" placeholder='输入ISBN' bindblur="onBlur" />
+      <i class="input-icon iconfont icon-search"></i>
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">书名</text>
+      <input type="text" id="title" class="input-item-text" placeholder='输入书名' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">作者</text>
+      <input type="text" id="author" class="input-item-text" placeholder='输入作者' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">译者</text>
+      <input type="text" id="translator" class="input-item-text" placeholder='输入译者' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">数量</text>
+      <input type="text" id="num" class="input-item-text" placeholder='输入数量' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">图片</text>
+      <input type="text" id="image" class="input-item-text" placeholder='输入图片' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">出版社</text>
+      <input type="text" id="publisher" class="input-item-text" placeholder='输入出版社' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">所有者</text>
+      <input type="text" id="owner" class="input-item-text" placeholder='输入所有者' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">书架位置</text>
+      <input type="text" id="place" class="input-item-text" placeholder='输入书架位置' bindblur="onBlur" />
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">内容简介</text>
+      <textarea id="content_intro" class="input-item-area" placeholder='输入内容简介' bindblur="onBlur"></textarea>
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">作者简介</text>
+      <textarea id="author_intro" class="input-item-area" placeholder='输入作者简介' bindblur="onBlur"></textarea>
+    </view>
+    <view class='input-item'>
+      <text class="input-item-label">目录</text>
+      <textarea id="catalog" class="input-item-area" placeholder='输入目录' bindblur="onBlur"></textarea>
+    </view>
+  </form>
+  <view class="btn-box">
+    <button class="btn" bindtap="submitData">提交</button>
+  </view>
+</view>

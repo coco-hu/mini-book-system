@@ -1,0 +1,52 @@
+{
+  "cloud": true,
+  "pages": [
+    "pages/index/index",
+    "pages/scan/scan",
+    "pages/myList/myList",
+    "pages/book/list/list",
+    "pages/book/detail/detail",
+    "pages/book/h-list/h-list",
+    "pages/management/user/list/list",
+    "pages/management/user/edit/edit",
+    "pages/management/book/edit/edit",
+    "pages/management/book/m-list/m-list",
+    "pages/management/book/h-list/h-list"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "FUTU图书管理系统",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/tab/search.png",
+        "selectedIconPath": "images/tab/search_active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/scan/scan",
+        "iconPath": "images/tab/scan.png",
+        "selectedIconPath": "images/tab/scan_active.png",
+        "text": "扫一扫"
+      },
+      {
+        "pagePath": "pages/myList/myList",
+        "iconPath": "images/tab/user.png",
+        "selectedIconPath": "images/tab/user_active.png",
+        "text": "我的"
+      }
+    ],
+    "selectedColor": "#009C00",
+    "backgroundColor": "#FFFFFF"
+  },
+  "netWorkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true
+}

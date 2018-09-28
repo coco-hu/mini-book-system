@@ -1,0 +1,13 @@
+/* miniprogram/pages/scan/scan.wxss */
+
+.view{    
+  position: fixed;
+  height:60px;
+   width:60px;
+  border-radius:2rem;
+  background:#999999;
+  color: white;
+  text-align: center;
+  line-height: 60px;
+}
+

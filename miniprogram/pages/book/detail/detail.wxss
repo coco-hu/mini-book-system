@@ -1,0 +1,48 @@
+/* miniprogram/pages/book/detail/detail.wxss */
+.title {
+  background: #FFF;
+  font-size: 16px;
+  height: 40px;
+  line-height: 40px;
+  width:100%;
+  text-align:center;
+  border-bottom: 1px solid #F0F0F0;
+}
+.book {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 14px 0;
+  background: #FFF;
+  display: flex;
+  flex-direction: row;
+}
+.book .img {
+  width: 84px;
+  height: 106px;
+  margin: 0 16px;
+  flex-grow: 0;
+}
+.book .info {
+  font-size: 12px;
+  line-height: 18px;
+}
+.book .info .txt01 {
+  color: #666666;
+}
+.sections {
+  background: #FFF;
+  margin-bottom: 12px;
+  border-top:1psx solid #e8e8e8;
+}
+.sections .sec-title {
+  padding: 0 14px;
+  line-height: 36px;
+  height: 36px;
+  border-bottom: 1px solid #F0F0F0;
+}
+.sections .content {
+  padding:12px 14px;
+  font-size:13px;
+  line-height:22px;
+
+}
