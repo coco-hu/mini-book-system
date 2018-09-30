@@ -7,11 +7,12 @@ Page({
    * 页面的初始数据
    */
   data: {
-    avatarUrl: './user-unlogin.png',
-    userInfo: {},
-    logged: false,
-    takeSession: false,
-    requestResult: ''
+    currentIndex: 0,
+    searchKey: '',
+    currentSearchKey: '',
+    hasLoadAll: false,
+    showLoading: false,
+    booklist: []
   },
 
   /**
@@ -25,83 +26,109 @@ Page({
       return
     }
 
-    //获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          wx.getUserInfo({
-            success: res => {
-              this.setData({
-                avatarUrl: res.userInfo.avatarUrl,
-                userInfo: res.userInfo
-              })
-            }
-          })
-        }
+    //默认显示图书信息，每次拉取20条
+    this.pullBookInfo()
+  },
+
+  /**
+   * 拉取更多图书信息
+   */
+  pullBookInfo : function (keyFlag) {
+    const db = wx.cloud.database();
+    const _ = db.command;
+    const UNIT = 6;
+    let records = db.collection('book');
+    if(keyFlag){
+      let key = this.data.searchKey;
+      console.log(key);
+      records = records.where(_.or([{
+        title: key
+      },{
+        author: key
+      },{
+        isbn10: key
+      },{
+        isbn13: key
+      }]))
+    }
+    if(this.data.currentIndex){
+      records = records.skip(this.data.currentIndex);
+    }
+    records.limit(UNIT).field({
+      author: true,
+      image: true,
+      title: true,
+      _id: true,
+      isbn13: true,
+      available_num: true
+    }).get().then(res => {
+      this.setData({
+        showLoading: false,
+        booklist: this.data.booklist.concat(res.data),
+        currentIndex: this.data.currentIndex + UNIT
+      });
+      if (!res.data || res.data.length < UNIT) {
+        this.setData({
+          hasLoadAll: true
+        })
       }
+    }).catch(err => {
+      this.setData({
+        showLoading: true
+      })
+      wx.showModal({
+        content: '无法拉取图书信息',
+      })
+    })
+
+  },
+  /**
+   * 保存搜索框的值
+   */
+  searchBlur: function(e){
+    this.setData({
+      currentSearchKey: e.detail.value
     })
   },
 
   /**
-   * 监听获取用户信息
+   * 搜索图书
    */
-  onGetUserInfo: function(e) {
-    if (!this.logged && e.detail.userInfo) {
-      this.setData({
-        logged:  true,
-        avatarUrl: e.detail.userInfo.avatarUrl,
-        userInfo: e.detail.userInfo
-      })
+  search: function (e) {
+    let key
+    if(e.currentTarget.id === 'search'){
+      key = e.detail.value;
+    }else{
+      key = this.data.currentSearchKey
     }
-  },
-  
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
+    this.setData({
+      searchKey: key,
+      currentIndex: 0,
+      booklist: [],
+      hasLoadAll: false
+    });
+    this.pullBookInfo(this.data.searchKey);
   },
 
   /**
-   * 生命周期函数--监听页面隐藏
+   * 去书籍详情页
    */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
+  toBookDetail: function (e) {
+    wx.navigateTo({
+      url: `/pages/book/detail/detail?id=${e.currentTarget.id}`,
+    })
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+    if(this.data.hasLoadAll){
+      return false;
+    }
+    this.setData({
+      showLoading: true
+    })
+    this.pullBookInfo();
   }
 })

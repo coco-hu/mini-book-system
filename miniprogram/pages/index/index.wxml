@@ -1,5 +1,30 @@
 <!--miniprogram/pages/index/index.wxml-->
 <view class="container">
+
+  <view class="search-result">
+    <view class="book" wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" id="{{item._id}}" wx:key="{{item._id}}" bindtap="toBookDetail">
+      <image class="img" src="{{item.image}}" />
+      <view class="info">
+        <view class="title">{{item.title}}</view>
+        <view class="author">{{item.author}}</view>
+        <view class="available">
+          当前可借数量：
+          <text class="green" wx:if="{{item.available_num > 0}}">{{item.available_num}}</text>
+          <text class="red" wx:if="{{item.available_num == 0}}">0</text>
+        </view>
+      </view>
+    </view>
+    <view class="loader-more" wx-if="{{showLoading}}">
+      <image class="loader" src="/images/loader.gif" />
+      正在加载更多
+    </view>
+    <view class="loader-finished" wx-if="{{hasLoadAll}}">已加载全部</view>
+  </view>
+
+  <view class="search-gap"></view>
   <!-- 搜索 -->
-  <input type="text" class="search-input" confirm-type='search' maxlength='20' auto-focus placeholder='书名/作者/ISBN' bindconfirm='onSearch' />
+  <view class="search-box">
+    <input type="text" id="search" class="search-input" value="{{currentSearchKey}}" confirm-type='search' maxlength='20' auto-focus placeholder='书名/作者/ISBN' bindconfirm='search' bindblur='searchBlur' />
+    <i class="search-icon iconfont icon-search" catchtap="search"></i>
+  </view>
 </view>

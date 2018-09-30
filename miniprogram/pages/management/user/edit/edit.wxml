@@ -3,28 +3,29 @@
   <form class="form-info">
     <view class='input-item'>
       <text class="input-item-label">用户名</text>
-      <input type="text" id="username" class="input-item-text" placeholder='输入用户名' bindblur="onBlur" />
+      <input type="text" id="username" bindblur='onBlur' value="{{user.username}}" class="input-item-text {{isEdit? 'disabled' : ''}}" placeholder='输入用户名' bindblur="onBlur" disabled='{{isEdit}}' />
     </view>
-    <view class='input-item'>
+    <!-- <view class='input-item'>
       <text class="input-item-label">密码</text>
       <input type="password" id="password" class="input-item-text" placeholder='输入密码' bindblur="onBlur" />
-    </view>
+    </view> -->
     <view class='input-item'>
       <text class="input-item-label">类型</text>
-      <picker class="input-item-text" bindchange='bindTypeChange' value="{{formData.type}}" range="{{userType}}">
+      <picker class="input-item-text" bindchange='bindUserTypeChange' value="{{user.userType}}" range="{{userTypeList}}">
         <view class="picker">
-          {{userType[formData.type]}}
+          {{userTypeList[user.userType]}}
         </view>
       </picker> 
       <i class="input-icon iconfont icon-unfold"></i>
     </view>
     <view class='input-item'>
       <text class="input-item-label">备注</text>
-      <input type="text" id="remark" class="input-item-text" placeholder='备注' bindblur="onBlur" />
+      <input type="text" id="remark" class="input-item-text" bindblur='onBlur' value="{{user.remark}}" placeholder='备注' />
     </view>
   </form>
   <view class="btn-box">
-    <button class="btn" bindtap="submitData">提交</button>
+    <button class="btn" wx:if="{{!isEdit}}" bindtap="submitData">添加</button>
+    <button class="btn" wx:if="{{isEdit}}" bindtap="editData">提交</button>
   </view>
 </view>
 

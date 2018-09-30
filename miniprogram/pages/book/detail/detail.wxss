@@ -33,6 +33,7 @@
   background: #FFF;
   margin-bottom: 12px;
   border-top:1psx solid #e8e8e8;
+  width:100%;
 }
 .sections .sec-title {
   padding: 0 14px;
@@ -44,5 +45,5 @@
   padding:12px 14px;
   font-size:13px;
   line-height:22px;
-
+  white-space: pre-wrap;
 }

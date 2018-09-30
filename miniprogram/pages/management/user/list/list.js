@@ -5,33 +5,33 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userlist: [{
-      id: 1,
-      username: 'coco',
-      type: 1,
-      password: ''
-    }, {
-      id: 2,
-      username: 'toobug',
-      type: 1,
-      password: ''
-    }, {
-      id: 3,
-      username: 'jedi',
-      type: 1,
-      password: ''
-    }, {
-      id: 4,
-      username: 'diandian',
-      type: 0,
-      password: ''
-    }]
+    userlist: []
   },
   
   delete: function (e) {
+    const db = wx.cloud.database()
+    let _self = this
     wx.showModal({
       title: '提示',
       content: '确定要删除该用户吗？',
+      success: function (res) {
+        if (res.confirm) {
+          db.collection('user').doc(e.currentTarget.id).remove().then(res => {
+            console.log(res)
+            wx.showToast({
+              title: '删除成功',
+              complete: () => {
+                _self.onLoad()
+              }
+            })
+          }).catch(res => {
+            wx.showModal({
+              content: '操作失败',
+              showCancel: false
+            })
+          })
+        }
+      }
     })
   },
 
@@ -44,7 +44,25 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    const db = wx.cloud.database()
+    let _self = this
 
+    db.collection('user').field({
+      username: true,
+      userType: true,
+      _id: true
+    }).get().then(res => {
+      console.log(res)
+    
+      _self.setData({
+        userlist: res.data
+      })
+    }).catch(err => {
+      console.log(err)
+      wx.showModal({
+        content: '操作失败'
+      })
+    })
   },
 
   /**

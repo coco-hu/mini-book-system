@@ -48,11 +48,16 @@ page {
   border: 1px solid #c8d0dc;
   overflow-y:auto;
 }
+.input-item-text.disabled {
+  background: #eee;
+}
 .input-icon {
   position:absolute;
   top:10px;
-  right:22px;
+  right:18px;
   line-height:32px;
+  padding-right: 2px;
+  background-color: #FFF;
 }
 .btn-box {
   position:fixed;
@@ -65,6 +70,7 @@ page {
   -webkit-box-shadow: 0 2px 18px 0 rgba(0,0,0,.2);
   -o-box-shadow: 0 2px 18px 0 rgba(0,0,0,.2);
   -ms-box-shadow: 0 2px 18px 0 rgba(0,0,0,.2);
+  z-index: 99;
 }
 .btn {
   background-color: #3378dd;

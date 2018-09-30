@@ -2,24 +2,24 @@
 <view class="container">
   <view class="table">
     <view class="tr head">
-      <view class="th">书名/作者</view>
+      <view class="th enlarge">书名/作者</view>
       <view class="th" wx:if="{{pageType === 'history'}}">借书日期</view>
       <view class="th" wx:if="{{pageType === 'history'}}">还书日期</view>
       <view class="th" wx:if="{{pageType === 'current'}}">到期时间</view>
       <view class="th" wx:if="{{pageType === 'current'}}">操作</view>
     </view>
     <block wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item.id}}">
-      <view class="tr" id="{{item.id}}" bindtap="toDetail">
-        <view class="td">
-          <text class="txt01">{{item.title}}</text>
-          <text class="txt02">{{item.author}}</text>
+      <view class="tr" id="{{item.bookId}}" bindtap="toDetail">
+        <view class="td enlarge">
+          <text class="txt01 ellipsis {{item.titleLength>20? 'small' : item.titleLength>15? 'middle' : 'large'}}">{{item.title}}</text>
+          <text class="txt02">{{item.author || '未知'}}</text>
         </view>
         <view class="td" wx:if="{{pageType === 'history'}}">{{item.start_date}}</view>
         <view class="td" wx:if="{{pageType === 'history'}}">{{item.end_date}}</view>
         <view class="td" wx:if="{{pageType === 'current'}}">{{item.expire_date}}</view>
         <view class="td" wx:if="{{pageType === 'current'}}">
-          <button class="btn t-btn" id="{{item.id}}" catchtap="reRent">续借</button>
-          <button class="btn t-btn" id="{{item.id}}" catchtap='return'>还书</button>
+          <button class="btn t-btn first" id="{{idx}}" catchtap="reRent">续借</button>
+          <button class="btn t-btn" id="{{idx}}" catchtap='retBook'>还书</button>
         </view>
       </view>
     </block>

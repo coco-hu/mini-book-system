@@ -2,11 +2,11 @@
 <view class="container">
   <view class="user-info">
     <view class="user-logo">
-      <img src="{{avatarUrl}}" />
+      <image class="img" src="{{avatarUrl}}" />
     </view>
     <view class="user-text">
-      <text class="txt01">coco</text>
-      <text class="txt02">test</text>
+      <text class="txt01">{{userInfo.nickName}}</text>
+      <text class="txt02">学如才识，不日进，则日退。</text>
     </view>
   </view>
 
