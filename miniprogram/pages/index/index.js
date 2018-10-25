@@ -1,6 +1,8 @@
 // miniprogram/pages/index/index.js
- const app = getApp()
+const myRequest = require('../../api/myRequest')
 
+const app = getApp()
+ 
 Page({
 
   /**
@@ -34,45 +36,28 @@ Page({
    * 拉取更多图书信息
    */
   pullBookInfo : function (keyFlag) {
-    const db = wx.cloud.database();
-    const _ = db.command;
-    const UNIT = 6;
-    let records = db.collection('book');
-    if(keyFlag){
-      let key = this.data.searchKey;
-      console.log(key);
-      records = records.where(_.or([{
-        title: key
-      },{
-        author: key
-      },{
-        isbn10: key
-      },{
-        isbn13: key
-      }]))
-    }
-    if(this.data.currentIndex){
-      records = records.skip(this.data.currentIndex);
-    }
-    records.limit(UNIT).field({
-      author: true,
-      image: true,
-      title: true,
-      _id: true,
-      isbn13: true,
-      available_num: true
-    }).get().then(res => {
+    const UNIT = 10
+    myRequest.call('book', {
+      $url: "search",
+      keyFlag: keyFlag,
+      key: this.data.searchKey,
+      size: UNIT,
+      startIndex: this.data.currentIndex
+    }).then(res => {
+      console.log(res)
+      let data =  res.list || []
       this.setData({
         showLoading: false,
-        booklist: this.data.booklist.concat(res.data),
+        booklist: this.data.booklist.concat(data),
         currentIndex: this.data.currentIndex + UNIT
-      });
-      if (!res.data || res.data.length < UNIT) {
+      })
+      if (!data || data.length < UNIT) {
         this.setData({
           hasLoadAll: true
         })
       }
     }).catch(err => {
+      console.log(err)
       this.setData({
         showLoading: true
       })
@@ -82,6 +67,7 @@ Page({
     })
 
   },
+  
   /**
    * 保存搜索框的值
    */
@@ -97,7 +83,7 @@ Page({
   search: function (e) {
     let key
     if(e.currentTarget.id === 'search'){
-      key = e.detail.value;
+      key = e.detail.value
     }else{
       key = this.data.currentSearchKey
     }
@@ -106,8 +92,8 @@ Page({
       currentIndex: 0,
       booklist: [],
       hasLoadAll: false
-    });
-    this.pullBookInfo(this.data.searchKey);
+    })
+    this.pullBookInfo(this.data.searchKey)
   },
 
   /**
@@ -124,11 +110,11 @@ Page({
    */
   onReachBottom: function () {
     if(this.data.hasLoadAll){
-      return false;
+      return false
     }
     this.setData({
       showLoading: true
     })
-    this.pullBookInfo();
+    this.pullBookInfo()
   }
 })

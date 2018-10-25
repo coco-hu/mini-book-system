@@ -1,0 +1,33 @@
+<!--miniprogram/pages/management/book/h-list/h-list.wxml-->
+<view class="container">
+  <view class="table">
+    <view class="tr head">
+      <view class="th enlarge">书名/作者</view>
+      <view class="th">推荐人/状态</view>
+      <view class="th">操作</view>
+    </view>
+    <block wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item._id}}">
+      <view class="tr" id="{{item.bookId}}" bindtap="toDetail">
+        <view class="td enlarge">
+          <text class="txt01 ellipsis">{{item.title}}</text>
+          <text class="txt02 ellipsis">{{item.author}}</text>
+        </view>
+        <view class="td">
+          <text class="txt01 ellipsis">{{item.username}}</text>
+        
+          <text class="txt02 orange" wx:if="{{item.status === 'PENDING'}}">等待处理</text>
+          <text class="txt02 light-orange" wx:if="{{item.status === 'BUYING'}}">购买中</text>
+          <text class="txt02 green" wx:if="{{item.status === 'ONSHELF'}}">已上架</text>
+          <text class="txt02 red" wx:if="{{item.status === 'REJECTED'}}">已驳回</text>
+        </view>
+        <view class="td">
+          <button class="btn t-btn first" id="{{item.bookId}}" wx:if="{{item.status === 'PENDING'}}" catchtap='agree'>同意</button>
+          <button class="btn t-btn" id="{{item.bookId}}" wx:if="{{item.status === 'PENDING'}}" catchtap='reject'>驳回</button>
+          <button class="btn t-btn" id="{{item.bookId}}" wx:if="{{item.status === 'BUYING'}}" catchtap='onShelf'>上架</button>
+          <text wx:if="{{item.status === 'ONSHELF' || item.status === 'REJECTED'}}">--</text>
+        </view>
+      </view>
+    </block>
+    <view class="tr" wx:if="{{booklistLength === 0}}">暂无数据</view>
+  </view>
+</view>

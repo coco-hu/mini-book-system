@@ -12,7 +12,7 @@
       <view class="tr" id="{{item.bookId}}" bindtap="toDetail">
         <view class="td enlarge">
           <text class="txt01 ellipsis {{item.titleLength>20? 'small' : item.titleLength>15? 'middle' : 'large'}}">{{item.title}}</text>
-          <text class="txt02">{{item.author || '未知'}}</text>
+          <text class="txt02 ellipsis">{{item.author || '未知'}}</text>
         </view>
         <view class="td" wx:if="{{pageType === 'history'}}">{{item.start_date}}</view>
         <view class="td" wx:if="{{pageType === 'history'}}">{{item.end_date}}</view>
@@ -23,5 +23,6 @@
         </view>
       </view>
     </block>
+    <view class="tr" wx:if="{{booklistLength === 0}}">暂无数据</view>
   </view>
 </view>

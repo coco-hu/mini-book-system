@@ -24,8 +24,8 @@
     </view>
   </form>
   <view class="btn-box">
-    <button class="btn" wx:if="{{!isEdit}}" bindtap="submitData">添加</button>
-    <button class="btn" wx:if="{{isEdit}}" bindtap="editData">提交</button>
+    <button class="btn" wx:if="{{!isEdit}}" bindtap="addUser">添加</button>
+    <button class="btn" wx:if="{{isEdit}}" bindtap="editUser">提交</button>
   </view>
 </view>
 

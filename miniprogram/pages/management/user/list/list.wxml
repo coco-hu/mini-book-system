@@ -19,5 +19,10 @@
         </view>
       </view>
     </block>
+    <view class="tr" wx:if="{{userlistLength === 0}}">暂无数据</view>
   </view>
+</view>
+
+<view>
+  <float-add link-url="/pages/management/user/edit/edit"></float-add>
 </view>

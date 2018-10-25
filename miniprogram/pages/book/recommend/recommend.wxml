@@ -1,0 +1,24 @@
+<!--miniprogram/pages/book/recommend/recommend.wxml-->
+<view class="container" wx:if="{{booklistLength > 0}}">
+  <view class="book" wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item._id}}"  id="{{item._id}}" bindtap="toDetail">
+    <image class="img" src="{{item.image}}" />
+    <view class="info">
+      <view class="title">{{item.title}}</view>
+      <view class="author">{{item.author}}</view>
+      <view class="available">
+        当前状态：
+        <text class="orange" wx:if="{{item.status === 'PENDING'}}">等待处理</text>
+        <text class="light-orange" wx:if="{{item.status === 'BUYING'}}">购买中</text>
+        <text class="green" wx:if="{{item.status === 'ONSHELF'}}">已上架</text>
+        <text class="red" wx:if="{{item.status === 'REJECTED'}}">已驳回</text>
+      </view>
+    </view>
+  </view>
+  <float-add link-url="/pages/management/book/edit/edit?type=recommend"></float-add>
+</view>
+
+<view class="container" wx:if="{{booklistLength === 0}}">
+  <view class="add" bindtap='toRecommend'>
+    <em class="iconfont icon-add"></em>
+  </view>
+</view>

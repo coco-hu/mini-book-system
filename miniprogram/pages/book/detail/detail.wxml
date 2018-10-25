@@ -9,11 +9,17 @@
       <view><text class="txt01">出版社：</text>{{book.publisher}}</view>
       <view><text class="txt01">ISBN：</text>{{book.isbn}}</view>
       <view><text class="txt01">书架位置：</text>{{book.place}}</view>
-      <view class="available">
+      <view class="available" wx:if="{{book.status === 'ONSHELF'}}">
         <text class="txt01">当前可借数量：</text>
         <text class="green" wx:if="{{book.available_num > 0}}">{{book.available_num}}</text>
         <text class="red" wx:if="{{book.available_num == 0}}">0</text>
       </view>
+      <view wx:if="{{book.status && book.status !== 'ONSHELF'}}">
+        <text class="txt01">当前状态：</text>
+        <text class="orange" wx:if="{{book.status === 'PENDING'}}">等待处理</text>
+        <text class="light-orange" wx:if="{{book.status === 'BUYING'}}">购买中</text>
+        <text class="red" wx:if="{{book.status === 'REJECTED'}}">已驳回</text>
+      </view>      
     </view>
   </view>
 
@@ -32,7 +38,7 @@
     <view class="content">{{book.catalog || '无'}}</view>
   </view>
 
-  <view class="btn-box" wx:if="{{book.available_num > 0}}">
+  <view class="btn-box" wx:if="{{book.available_num > 0 && !isBorrowed}}">
     <button class="btn" bindtap="borrowBook">借阅</button>
   </view>
 </view>

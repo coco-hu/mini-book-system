@@ -1,0 +1,26 @@
+<!--miniprogram/pages/book/m-list/m-list.wxml-->
+<view class="container">
+  <view class="table">
+    <view class="tr head">
+      <view class="th enlarge2">书名/作者</view>
+      <view class="th">操作</view>
+    </view>
+    <block wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item._id}}">
+      <view class="tr">
+        <view class="td enlarge2">
+          <text class="txt01 ellipsis">{{item.title}}</text>
+          <text class="txt02 ellipsis">{{item.author}}</text>
+        </view>
+        <view class="td">
+          <button class="btn t-btn" id="{{item._id}}" bindtap="delete">删除</button>
+          <button class="btn t-btn" id="{{item._id}}" bindtap='edit'>编辑</button>
+        </view>
+      </view>
+    </block>
+    <view class="tr" wx:if="{{booklistLength === 0}}">暂无数据</view>
+  </view>
+</view>
+
+<view>
+  <float-add link-url="/pages/management/book/edit/edit"></float-add>
+</view>

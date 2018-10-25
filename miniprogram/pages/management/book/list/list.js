@@ -1,4 +1,4 @@
-// miniprogram/pages/user/list/list.js
+// miniprogram/pages/book/m-list/m-list.js
 
 const myRequest = require('../../../../api/myRequest')
 
@@ -8,8 +8,8 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userlist: [],
-    userlistLength: ''
+    booklist: [],
+    booklistLength: ''
   },
 
   /**
@@ -18,19 +18,17 @@ Page({
   onShow: function () {
     const db = wx.cloud.database()
     let _self = this
-
-    myRequest.call('user', {
-      $url: "list"
+    myRequest.call('book', {
+      $url: "booklist",
     }).then(res => {
       console.log(res)
       _self.setData({
-        userlist: res.list,
-        userlistLength: res.list.length
+        booklist: res.list,
+        booklistLength: res.list.length
       })
     }).catch(err => {
-      console.log(err)
       _self.setData({
-        userlistLength: 0
+        booklistLength: 0
       })
       wx.showModal({
         content: '操作失败'
@@ -39,17 +37,17 @@ Page({
   },
 
   /**
-   * 删除用户
+   * 删除图书
    */
   delete: function (e) {
     const db = wx.cloud.database()
     let _self = this
     wx.showModal({
       title: '提示',
-      content: '确定要删除该用户吗？',
+      content: '确定要删除这本书吗？',
       success: function (res) {
-        if (res.confirm) {
-          myRequest.call('user', {
+        if(res.confirm){
+          myRequest.call('book', {
             $url: "delete",
             id: e.currentTarget.id
           }).then(res => {
@@ -58,9 +56,10 @@ Page({
               title: '删除成功',
               complete: () => {
                 _self.onShow()
-              }
+              } 
             })
           }).catch(res => {
+            console.log(res)
             wx.showModal({
               content: '操作失败',
               showCancel: false
@@ -72,12 +71,12 @@ Page({
   },
 
   /**
-   * 去编辑页
-   */
-  edit: function (e) {
+    * 去编辑页
+    */
+  edit: function (event) {
     wx.navigateTo({
-      url: `../edit/edit?id=${e.currentTarget.id}`,
+      url: `../edit/edit?id=${event.currentTarget.id}`,
     })
-  }
+  },
 
 })

@@ -32,6 +32,10 @@
 .td.enlarge {
   min-width: 38%;
 }
+.th.enlarge2,
+.td.enlarge2 {
+  min-width: 50%;
+}
 .td .txt01 {
   display: block;
 }
@@ -41,7 +45,7 @@
   color:gray;
 }
 
-.td .txt01.ellipsis{
+.td .ellipsis{
   white-space:nowrap;
   text-overflow:ellipsis;
   overflow:hidden;

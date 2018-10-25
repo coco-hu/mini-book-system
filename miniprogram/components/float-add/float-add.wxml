@@ -1,0 +1,4 @@
+<!--components/float-add/float-add.wxml-->
+<view  class="float-view" style=" top:{{top}}px;left:{{left}}px;margin: 0 0rpx 0rpx 0%;" catchtouchmove="setTouchMove" bindtap='toAddPage'>
+  <em class="iconfont icon-add float-add"></em>
+</view>

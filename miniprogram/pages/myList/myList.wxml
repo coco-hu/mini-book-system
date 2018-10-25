@@ -6,26 +6,22 @@
     </view>
     <view class="user-text">
       <text class="txt01">{{userInfo.nickName}}</text>
-      <text class="txt02">学如才识，不日进，则日退。</text>
+      <text class="txt02">学业才识,不日进,则日退。</text>
     </view>
   </view>
 
 
   <view class="summary-list">
     <view>
-      <text class="data">1</text>
+      <text class="data">{{borrowNum}}</text>
       <text class="summary">借阅</text>
     </view>
     <view>
-      <text class="data">2</text>
-      <text class="summary">待还</text>
+      <text class="data">{{expiredNum}}</text>
+      <text class="summary">逾期</text>
     </view>
     <view>
-      <text class="data">3</text>
-      <text class="summary">预约</text>
-    </view>
-    <view>
-      <text class="data">3</text>
+      <text class="data">{{recommendNum}}</text>
       <text class="summary">推荐</text>
     </view>
   </view>
@@ -42,16 +38,8 @@
       <text class="txt">历史借阅</text>
       <i class="arrow iconfont icon-enter"></i>
     </view>
-  </view>
-
-  <view class="my-list">
-    <view class="item" id="order" bindtap="toPage">
-      <em class="icon iconfont icon-flag_fill yellow"></em>
-      <text class="txt">我的预约</text>
-      <i class="arrow iconfont icon-enter"></i>
-    </view>
     <view class="item" id="recommend" bindtap="toPage">
-      <em class="icon iconfont icon-like yellow"></em>
+      <em class="icon iconfont icon-flag_fill yellow"></em>
       <text class="txt">我的推荐</text>
       <i class="arrow iconfont icon-enter"></i>
     </view>
@@ -74,11 +62,6 @@
     <view class="item" id="recommend-list" bindtap="toPage">
       <em class="icon iconfont icon-danju-xianxing dark-orange"></em>
       <text class="txt">用户推荐</text>
-      <i class="arrow iconfont icon-enter"></i>
-    </view>
-    <view class="item" id="shopping-list" bindtap="toPage">
-    <em class="icon iconfont icon-shangpin-xianxing dark-orange"></em>
-      <text class="txt">购书历史</text>
       <i class="arrow iconfont icon-enter"></i>
     </view>
     <view class="item" id="overdue-list" bindtap="toPage">

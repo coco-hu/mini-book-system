@@ -1,5 +1,7 @@
 // miniprogram/pages/user/edit/edit.js
 
+const myRequest = require('../../../../api/myRequest')
+
 Page({
 
   /**
@@ -25,19 +27,19 @@ Page({
     wx.setNavigationBarTitle({
       title: ('编辑用户'),
     })
-    const db = wx.cloud.database();
     let _self = this
 
     this.setData({
       isEdit: true
-    });
-
-    db.collection('user').doc(options.id).get().then(res => {
-      console.log(res);
+    })
+    myRequest.call('user', {
+      $url: "detail",
+      id: options.id
+    }).then(res => {
+      console.log(res)
       _self.setData({
-        user: res.data
-      });
-
+        user: res.user
+      })
     }).catch(err => {
       console.log(err)
       wx.showModal({
@@ -46,57 +48,56 @@ Page({
     })
   },
 
+  /**
+   * 同步表单数据
+   */
   onBlur: function (e) {
     let key = e.currentTarget.id
     let value = e.detail.value
 
-    let newData = this.data.user;
+    let newData = this.data.user
     newData[key] = value
     this.setData({
       user: newData
     })
   },
 
+  /**
+   * 用户类型选择
+   */
   bindUserTypeChange: function (e) {
     this.setData({
       'user.userType': +e.detail.value
-    });
+    })
   },
 
-
-  submitData: function (e) {
-    let _self = this;
-    const db = wx.cloud.database();
-    let aData = this.data.user;
+  /**
+   * 新增
+   */
+  addUser: function (e) {
+    let _self = this
+    let aData = this.data.user
     
-    db.collection('user').where({
-      username: aData.username
-    }).count().then(res => {
-      console.log(res);
-      if(res.total > 0){
-        wx.showModal({
-          title: '提示',
-          content: '用户名已存在',
-        })
-        return
-      }
-      db.collection('user').add({
-        data: aData
-      }).then(res => {
-        wx.showToast({
-          title: '添加成功',
-        })
-      }, (err) => {
-        wx.showModal({
-          title: '提示',
-          content: '添加失败',
-          showCancel: false
-        })
+    myRequest.call('user', {
+      $url: "add",
+      data: aData
+    }).then(res => {
+      console.log(res)
+      wx.showToast({
+        title: '添加成功',
+        complete: () => {
+          setTimeout(()=> {
+            wx.navigateBack({
+              url: '../list/list'
+            })
+          }, 1000)
+        }
       })
     }, err => {
+      console.log(err)
       wx.showModal({
         title: '提示',
-        content: '添加失败',
+        content: err.message,
         showCancel: false
       })
     })
@@ -105,19 +106,18 @@ Page({
   /**
    * 编辑
    */
-  editData: function () {
-    const db = wx.cloud.database()
+  editUser: function () {
     let _self = this
 
     let eData = Object.assign({}, _self.data.user)
 
     console.log(eData)
 
-    db.collection('user').doc(_self.data.user._id).update({
-      data: {
-        remark: eData.remark,
-        userType: eData.userType
-      }
+    myRequest.call('user', {
+      $url: "edit",
+      id: _self.data.user._id,
+      remark: eData.remark,
+      userType: eData.userType
     }).then(res => {
       console.log(res)
       wx.showToast({

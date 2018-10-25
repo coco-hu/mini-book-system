@@ -19,7 +19,7 @@
         <text class="input-item-label">译者</text>
         <input type="text" id="translator" class="input-item-text" value="{{book.translator}}" placeholder='输入译者' bindblur="onBlur" />
       </view>
-      <view class='input-item'>
+      <view class='input-item' wx:if="{{!isRecommend}}">
         <text class="input-item-label">数量</text>
         <input type="text" id="num" class="input-item-text" value="{{book.num}}" placeholder='输入数量' bindblur="onBlur" />
       </view>
@@ -54,7 +54,8 @@
     </block>
 </form>
   <view class="btn-box">
-    <button class="btn" wx:if="{{!isEdit}}" bindtap="submitData">添加</button>
-    <button class="btn" wx:if="{{isEdit}}" bindtap="editData">提交</button>
+    <button class="btn" wx:if="{{!isEdit && !isRecommend}}" bindtap="addBook">添加</button>
+    <button class="btn" wx:if="{{isEdit && !isRecommend}}" bindtap="editBook">提交</button>
+    <button class="btn" wx:if="{{isRecommend}}" bindtap="doRecommend">提交推荐</button>
   </view>
 </view>

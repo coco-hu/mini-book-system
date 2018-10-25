@@ -9,18 +9,12 @@
   border-bottom: 1px solid #F0F0F0;
 }
 .book {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 14px 0;
-  background: #FFF;
-  display: flex;
-  flex-direction: row;
+  min-width: 134px;
+  padding-left: 114px;
 }
 .book .img {
   width: 84px;
   height: 106px;
-  margin: 0 16px;
-  flex-grow: 0;
 }
 .book .info {
   font-size: 12px;

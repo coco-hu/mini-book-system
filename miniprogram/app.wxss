@@ -76,21 +76,43 @@ page {
   background-color: #3378dd;
   color: #FFF;
 }
+.book {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px 0;
+  background: #FFF;
+  padding-left:100px;
+  min-height:108px;
+  box-sizing:border-box;
+}
+.book .img {
+  width: 62px;
+  height: 80px;
+  margin: 0 16px;
+  position:absolute;
+  left:0;
+}
+.book .title {
+  color: #37a;
+  line-height: 20px;
+  margin-bottom: 4px;
+}
+
 .green {
-  color: #009C00;
+  color: #009C00 !important;
 }
 .yellow {
-  color: yellowgreen;
+  color: yellowgreen !important;
 }
 .orange {
-  color: orange;
+  color: orange !important;
 }
 .light-orange {
-  color: wheat;
+  color: wheat !important;
 }
 .dark-orange {
-  color: #CD661D;
+  color: #CD661D !important;
 }
 .red {
-  color: red;
+  color: red !important;
 }

@@ -1,21 +1,18 @@
-
-
-
-
 {
   "cloud": true,
   "pages": [
     "pages/index/index",
     "pages/scan/scan",
     "pages/myList/myList",
-    "pages/book/list/list",
     "pages/book/detail/detail",
     "pages/book/h-list/h-list",
     "pages/management/user/list/list",
     "pages/management/user/edit/edit",
     "pages/management/book/edit/edit",
-    "pages/management/book/m-list/m-list",
-    "pages/management/book/h-list/h-list"
+    "pages/management/book/list/list",
+    "pages/management/book/recommend-list/recommend-list",
+    "pages/book/recommend/recommend",
+    "pages/management/book/overdue-list/overdue-list"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
