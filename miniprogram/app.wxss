@@ -21,10 +21,13 @@ page {
   background: #FFF;
 }
 .input-item {
-  padding: 10px 10px 10px 80px;
+  padding: 6px 10px 6px 80px;
   position: relative;
   box-sizing: border-box;
   background: #FFF;
+}
+.input-item02 {
+  padding: 6px 0;
 }
 .input-item-label {
   height: 28px;
@@ -40,6 +43,10 @@ page {
   padding: 0 10px;
   border-bottom: 1px solid #c8d0dc;
 }
+.input-item-text02 {
+  width: 80%;
+  margin: 0 auto;
+}
 .input-item-area {
   height: 60px;
   width: 90%;
@@ -53,7 +60,7 @@ page {
 }
 .input-icon {
   position:absolute;
-  top:10px;
+  top:6px;
   right:18px;
   line-height:32px;
   padding-right: 2px;

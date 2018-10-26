@@ -12,7 +12,9 @@
     "pages/management/book/list/list",
     "pages/management/book/recommend-list/recommend-list",
     "pages/book/recommend/recommend",
-    "pages/management/book/overdue-list/overdue-list"
+    "pages/management/book/overdue-list/overdue-list",
+    "pages/a/a",
+    "pages/site/login/login"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
@@ -28,12 +30,6 @@
         "iconPath": "images/tab/search.png",
         "selectedIconPath": "images/tab/search_active.png",
         "text": "首页"
-      },
-      {
-        "pagePath": "pages/scan/scan",
-        "iconPath": "images/tab/scan.png",
-        "selectedIconPath": "images/tab/scan_active.png",
-        "text": "扫一扫"
       },
       {
         "pagePath": "pages/myList/myList",

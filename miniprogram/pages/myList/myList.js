@@ -1,4 +1,7 @@
 // miniprogram/pages/myList/myList.js
+
+const myRequest = require('../../api/myRequest')
+
 Page({
 
   /**
@@ -36,32 +39,28 @@ Page({
   onShow: function () {
     
     let _self = this
-    let tTime = new Date().getTime()/1000 + 100*24*60*60
 
-    wx.cloud.callFunction({
-      name: 'getMyInfo',
-      data: {
-        userId: 'W69vv_D0YIt7pmfH',
-        status: 0,
-        expire_time: tTime
-      }
+    myRequest.call('book', {
+      $url: "count-sum",
+      userId: "9787500656524",
+      status: 0
     }).then(res => {
       console.log(res)
-      let data = res.result
+      let data = res
       _self.setData({
         borrowNum: data.borrowNum,
         expiredNum: data.expiredNum,
         recommendNum: data.recommendNum
       })
     }).catch(err => {
-      console.log(err)
+      console.log("==", err)
       wx.showModal({
         content: '拉取数据失败',
       })
     })
 
   },
-  
+
   /**
    * 进入相应页面
    */

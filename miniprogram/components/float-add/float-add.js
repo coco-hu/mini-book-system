@@ -8,14 +8,10 @@ Component({
       type: String,
       value: ''
     },
-    maxLeft: {
-      type: Number,
-      value: 10,
-    },
-    maxTop: {
-      type: Number,
-      value: 10
-    },
+    floatType: {
+      type: String,
+      value: 'add',
+    }
   },
 
   /**
@@ -49,11 +45,22 @@ Component({
    * 组件的方法列表
    */
   methods: {
+    tabFloat: function () {
+      if(this.data.floatType === 'camera'){
+        this.scan()
+      }else{
+        this.toAddPage()
+      }
+    },
     //去添加项目的页面
     toAddPage: function () {
       wx.navigateTo({
         url: this.data.linkUrl,
       })
+    },
+    //扫码
+    scan: function () {
+      this.triggerEvent("scan");
     },
     // 浮动按钮拖动
     setTouchMove: function (e) {

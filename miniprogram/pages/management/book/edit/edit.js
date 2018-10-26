@@ -64,7 +64,7 @@ Page({
   },
 
   /**
-   * 同步输数据
+   * 同步输入数据
    */
   onBlur: function (e) {
     console.log(e.currentTarget.id, e.detail.value)

@@ -106,6 +106,39 @@ Page({
   },
 
   /**
+   * 扫码识别
+   */
+  doScan: function () {
+    // wx.navigateTo({
+    //   url: `/pages/book/detail/detail?id=W9GwzZL-scb2MQoo`,
+    // })
+    // return
+    wx.scanCode({
+      success: (res) => {
+        myRequest.call('book', {
+          $url: "search-isbn",
+          isbn: res.result
+        }).then(res => {
+          console.log(res)
+          wx.navigateTo({
+            url: `/pages/book/detail/detail?id=${res.id}`,
+          })
+        }).catch(err => {
+          console.log(err)
+          wx.showModal({
+            content: err && err.message
+          })
+        })
+      },
+      fail: (err) => {
+        wx.showToast({
+          title: err
+        })
+      }
+    })
+  },
+
+  /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {

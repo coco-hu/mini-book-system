@@ -11,6 +11,30 @@ const _ = db.command
 exports.main = async (event, context) => {
   const app = new TcbRouter({ event })
 
+  const handleAuth = async (ctx, next) => {
+    let result = {}
+    if(event.sessionId){
+      let currentTime = new Date().getTime() / 1000
+      result = await db.collection('session').doc(event.sessionId).get()
+      if (result.data && result.data.expireTime >= currentTime) {
+        await next()
+      } else {
+        ctx.body = {
+          code: '101',
+          message: '登录失效',
+          result: result.data
+        }
+      }
+    } else {
+      ctx.body = {
+        code: '101',
+        message: 'sessionId 缺失',
+        result: result
+      }
+    }
+    return
+  }
+
   app.router('search', async (ctx) => {
     let records = db.collection('book')
     if (event.keyFlag) {
@@ -56,6 +80,39 @@ exports.main = async (event, context) => {
     }
   })
 
+  app.router('search-isbn', async (ctx) => {
+    try {
+      let result = await db.collection('book').where(_.or([{
+        isbn10: event.isbn
+      }, {
+        isbn13: event.isbn
+      }])).get()
+
+      if (result.data && result.data.length > 0 && result.data[0]._id){
+        ctx.body = {
+          code: 0,
+          data: {
+            id: result.data[0]._id
+          }
+        }
+      } else {
+        ctx.body = {
+          code: -2,
+          data: {},
+          message: '该书目不存在'
+        }
+      }
+      
+    } catch (e) {
+      console.error(e)
+      ctx.body = {
+        code: -1,
+        data: {},
+        message: '请求失败'
+      }
+    }
+  })
+
   app.router('detail', async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).get()
@@ -83,7 +140,45 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('borrow-list', async (ctx) => {
+
+  app.router('count-sum', handleAuth, async (ctx) => {
+    try {
+      let tTime = new Date().getTime() / 1000 + 100 * 24 * 60 * 60
+
+      let result1 = await db.collection('borrow').where({
+        userId: event.userId,
+        status: event.status
+      }).count()
+
+      let result2 = await db.collection('borrow').where({
+        userId: event.userId,
+        status: event.status,
+        expire_time: _.lt(tTime)
+      }).count()
+
+      let result3 = await db.collection('recommend').where({
+        userId: event.userId
+      }).count()
+
+      ctx.body = {
+        code: 0,
+        data: {
+          borrowNum: result1.total,
+          expiredNum: result2.total,
+          recommendNum: result3.total
+        }
+      }
+    } catch (e) {
+      console.error(e)
+      ctx.body = {
+        code: -1,
+        data: {},
+        message: '请求失败'
+      }
+    }
+  })
+
+  app.router('borrow-list', handleAuth, async (ctx) => {
     try {
       let borrowArr = []
       let bidArr = []
@@ -133,7 +228,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('borrow', async (ctx) => {
+  app.router('borrow', handleAuth, async (ctx) => {
     try {
       let result1 = await db.collection('borrow').add({
         data: event.borrowData
@@ -157,7 +252,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('renew', async (ctx) => {
+  app.router('renew', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('borrow').doc(event.id).update({
         data: {
@@ -179,7 +274,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('return', async (ctx) => {
+  app.router('return', handleAuth, async (ctx) => {
     try {
       let result1 = await db.collection('borrow').doc(event.borrowId).update({
         data: {
@@ -207,7 +302,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('recommend-list', async (ctx) => {
+  app.router('recommend-list', handleAuth, async (ctx) => {
     try {
       let resultData = []
       let bookIdArr = []
@@ -242,7 +337,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('all-recommend-list', async (ctx) => {
+  app.router('all-recommend-list', handleAuth, async (ctx) => {
     try {
       let resultData = []
       let bookIdArr = []
@@ -301,7 +396,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('recommend', async (ctx) => {
+  app.router('recommend', handleAuth, async (ctx) => {
     try {
       let result1 = await db.collection('book').where({
         isbn: event.isbn
@@ -341,7 +436,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('recommend-agree', async (ctx) => {
+  app.router('recommend-agree', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).update({
         data: {
@@ -362,7 +457,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('recommend-reject', async (ctx) => {
+  app.router('recommend-reject', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).update({
         data: {
@@ -383,7 +478,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('recommend-on-shelf', async (ctx) => {
+  app.router('recommend-on-shelf', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).update({
         data: {
@@ -404,7 +499,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('booklist', async (ctx) => {
+  app.router('booklist', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('book').field({
         title: true,
@@ -433,7 +528,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('add', async (ctx) => {
+  app.router('add', handleAuth, async (ctx) => {
     try {
       let result1 = await db.collection('book').where({
         isbn: event.isbn
@@ -464,7 +559,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('edit', async (ctx) => {
+  app.router('edit', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.bookId).update({
         data: event.data
@@ -483,7 +578,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('delete', async (ctx) => {
+  app.router('delete', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).remove()
       ctx.body = {
@@ -500,7 +595,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('overdue-list', async (ctx) => {
+  app.router('overdue-list', handleAuth, async (ctx) => {
     try {
       let bidArr = []
       let userIdArr = []

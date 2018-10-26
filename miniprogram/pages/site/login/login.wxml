@@ -1,0 +1,16 @@
+<!--miniprogram/pages/site/login/login.wxml-->
+<view class="container">
+  <view class="logo-box"><image class="logo" src="/images/logo.png"></image></view>
+  <form class="form-info">
+    <view class='input-item input-item02'>
+      <input type="text" id="username" class="input-item-text input-item-text02" value="{{user.username}}" placeholder='用户名' bindblur="onBlur"  />
+    </view>
+    <view class='input-item input-item02'>
+      <input type="text" id="password" class="input-item-text input-item-text02" value="{{user.password}}" placeholder='密码' bindblur="onBlur"  />
+    </view>
+  </form>
+  <view class="form-btn">
+    <button class="btn" bindtap="login">登录</button>
+  </view>
+</view>
+    

@@ -11,7 +11,30 @@ const _ = db.command
 exports.main = async (event, context) => {
   const app = new TcbRouter({ event })
 
-  app.router('list', async (ctx) => {
+  const handleAuth = async (ctx, next) => {
+    let result = {}
+    if (event.sessionId) {
+      let currentTime = new Date().getTime() / 1000
+      result = await db.collection('session').doc(event.sessionId).get()
+      if (result.data && result.data.expireTime >= currentTime) {
+        await next()
+      } else {
+        ctx.body = {
+          code: '101',
+          message: '登录失效',
+          result: result.data
+        }
+      }
+    } else {
+      ctx.body = {
+        code: '101',
+        message: 'sessionId 缺失',
+        result: result
+      }
+    }
+    return
+  }
+  app.router('list', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('user').field({
         username: true,
@@ -35,7 +58,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('detail', async (ctx) => {
+  app.router('detail', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('user').doc(event.id).get()
 
@@ -55,7 +78,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('add', async (ctx) => {
+  app.router('add', handleAuth, async (ctx) => {
     try {
       let result1 = await db.collection('user').where({
         username: event.data.username
@@ -87,7 +110,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('edit', async (ctx) => {
+  app.router('edit', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('user').doc(event.id).update({
         data: {
@@ -109,7 +132,7 @@ exports.main = async (event, context) => {
     }
   })
 
-  app.router('delete', async (ctx) => {
+  app.router('delete', handleAuth, async (ctx) => {
     try {
       let result = await db.collection('user').doc(event.id).remove()
       ctx.body = {
