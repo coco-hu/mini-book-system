@@ -2,6 +2,7 @@
 
 const utils = require('../../../utils/utils')
 const myRequest = require('../../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -21,26 +22,43 @@ Page({
     this.setData({
       pageType: options.type
     })
+    wx.setNavigationBarTitle({
+      title: options.type === "current"? '当前借阅' : '历史借阅'
+    })
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.getBorrowList()
+  },
+
+  /**
+   * 获取统计信息
+   */
+  getBorrowList: function () {
     let _self = this
     let _type = this.data.pageType
+    let userId = wx.getStorageSync('userId')
 
+    wx.showLoading()
     myRequest.call('book', {
       $url: "borrow-list",
-      userId: 'W69vv_D0YIt7pmfH',
+      userId: userId,
       status: _type === 'current' ? 0 : 1
     }).then(res => {
+      wx.hideLoading()
       console.log('===', res)
       _self.setData({
         booklist: res.list,
         booklistLength: res.list.length
       })
     }).catch(err => {
+      wx.hideLoading()
+      if (!app.checkLogin(err.code)) {
+        return
+      }
       _self.setData({
         booklistLength: 0
       })
@@ -65,20 +83,22 @@ Page({
       content: '确定要续借这本吗？',
       success: (res) => {
         if (res.confirm) {
+          wx.showLoading()
           myRequest.call('book', {
             $url: "renew",
             id: item._id,
             expire_date: eDate,
             expire_time: eTime
           }).then(res => {
-            wx.showToast({
-              title: '续借成功',
-              complete: () => {
-                _self.onShow()
-              }
-            })
+            console.log(res)
+            wx.hideLoading()
+            _self.onShow()
           }).catch(err => {
             console.log(err)
+            wx.hideLoading()
+            if (!app.checkLogin(err.code)) {
+              return
+            }
             wx.showModal({
               content: '操作失败',
             })
@@ -103,6 +123,7 @@ Page({
       content: '确定归还',
       success: (res) => {
         if (res.confirm) {
+          wx.showLoading()
           myRequest.call('book', {
             $url: "return",
             borrowId: item._id,
@@ -111,14 +132,14 @@ Page({
             end_time: eTime,
           }).then(res => {
             console.log(res)
-            wx.showToast({
-              title: '还书成功',
-              complete: () => {
-                _self.onShow()
-              }
-            })
+            wx.hideLoading()
+            _self.onShow()
           }).catch(err => {
             console.log(err)
+            wx.hideLoading()
+            if (!app.checkLogin(err.code)) {
+              return
+            }
             wx.showModal({
               content: '操作失败'
             })

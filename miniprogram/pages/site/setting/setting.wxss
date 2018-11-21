@@ -1,0 +1,39 @@
+/* miniprogram/pages/site/update-password/update-password.wxss */
+
+.my-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #FFF;
+  border-top:1psx solid #e8e8e8;
+  margin-top: 14px;
+}
+
+.my-list .item{
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 14px;
+  border-bottom: 1px solid #F0F0F0;
+}
+.my-list .item .icon {
+  margin-right: 14px;
+  font-size: 18px;
+  height: 40px;
+  vertical-align: bottom;
+  display: inline-block;
+}
+.my-list .item .arrow {
+  position:absolute;
+  right:12px;
+  color:#888;
+}
+.logout {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin-top: 14px;
+  background: #FFF;
+  color: red;
+}

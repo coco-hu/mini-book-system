@@ -1,6 +1,7 @@
 // miniprogram/pages/book/m-list/m-list.js
 
 const myRequest = require('../../../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -27,6 +28,9 @@ Page({
         booklistLength: res.list.length
       })
     }).catch(err => {
+      if (!app.checkLogin(err.code)) {
+        return
+      }
       _self.setData({
         booklistLength: 0
       })
@@ -46,20 +50,21 @@ Page({
       title: '提示',
       content: '确定要删除这本书吗？',
       success: function (res) {
-        if(res.confirm){
+        if (res.confirm) {
+          wx.showLoading()
           myRequest.call('book', {
             $url: "delete",
             id: e.currentTarget.id
           }).then(res => {
             console.log(res)
-            wx.showToast({
-              title: '删除成功',
-              complete: () => {
-                _self.onShow()
-              } 
-            })
-          }).catch(res => {
-            console.log(res)
+            wx.hideLoading()
+            _self.onShow()
+          }).catch(err => {
+            console.log(err)
+            if (!app.checkLogin(err.code)) {
+              return
+            }
+            wx.hideLoading()
             wx.showModal({
               content: '操作失败',
               showCancel: false

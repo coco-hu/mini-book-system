@@ -1,6 +1,7 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
+const MD5 = require("blueimp-md5")
 
 cloud.init()
 
@@ -12,27 +13,36 @@ exports.main = async (event, context) => {
   const app = new TcbRouter({ event })
 
   const handleAuth = async (ctx, next) => {
-    let result = {}
-    if(event.sessionId){
-      let currentTime = new Date().getTime() / 1000
-      result = await db.collection('session').doc(event.sessionId).get()
-      if (result.data && result.data.expireTime >= currentTime) {
-        await next()
+    try {
+      let result = {}
+      if (event.sessionId) {
+        let currentTime = new Date().getTime() / 1000
+        result = await db.collection('session').where({
+          key: MD5(event.sessionId)
+        }).get()
+        if (result.data && result.data[0] && result.data[0].expireTime >= currentTime) {
+          await next()
+        } else {
+          ctx.body = {
+            code: '101',
+            message: '登录失效',
+            result: result.data
+          }
+        }
       } else {
         ctx.body = {
           code: '101',
-          message: '登录失效',
-          result: result.data
+          message: 'sessionId 缺失',
+          result: result
         }
       }
-    } else {
+      return
+    }catch(e){
       ctx.body = {
         code: '101',
-        message: 'sessionId 缺失',
-        result: result
+        message: '鉴权不通过'
       }
     }
-    return
   }
 
   app.router('search', async (ctx) => {
@@ -61,7 +71,8 @@ exports.main = async (event, context) => {
         title: true,
         _id: true,
         isbn13: true,
-        available_num: true
+        num: true,
+        borrowed_num: true
       }).get()
 
       ctx.body = {
@@ -143,7 +154,7 @@ exports.main = async (event, context) => {
 
   app.router('count-sum', handleAuth, async (ctx) => {
     try {
-      let tTime = new Date().getTime() / 1000 + 100 * 24 * 60 * 60
+      let tTime = new Date().getTime() / 1000
 
       let result1 = await db.collection('borrow').where({
         userId: event.userId,
@@ -230,17 +241,29 @@ exports.main = async (event, context) => {
 
   app.router('borrow', handleAuth, async (ctx) => {
     try {
-      let result1 = await db.collection('borrow').add({
-        data: event.borrowData
-      })
-      let result2 = await db.collection('book').doc(event.borrowData.bookId).update({
-        data: {
-          available_num: event.available_num
-        },
-      })
-      ctx.body = {
-        code: 0,
-        data: {}
+      let result = await db.collection('borrow').where({
+        bookId: event.borrowData.bookId,
+        userId: event.borrowData.userId,
+        status: 0
+      }).count()
+      if (result.total > 0){
+        ctx.body = {
+          code : '-2',
+          message: '不可重复借阅'
+        }
+      }else{
+        let result1 = await db.collection('borrow').add({
+          data: event.borrowData
+        })
+        let result2 = await db.collection('book').doc(event.borrowData.bookId).update({
+          data: {
+            borrowed_num: _.inc(1)
+          },
+        })
+        ctx.body = {
+          code: 0,
+          data: {}
+        }
       }
     } catch (e) {
       console.error(e)
@@ -285,7 +308,7 @@ exports.main = async (event, context) => {
       })
       let result2 = await db.collection('book').doc(event.bookId).update({
         data: {
-          available_num: _.inc(1)
+          borrowed_num: _.inc(-1)
         }
       })
       ctx.body = {
@@ -580,10 +603,22 @@ exports.main = async (event, context) => {
 
   app.router('delete', handleAuth, async (ctx) => {
     try {
-      let result = await db.collection('book').doc(event.id).remove()
-      ctx.body = {
-        code: 0,
-        data: {}
+      let result1 = await db.collection('borrow').where({
+        bookId: event.id,
+        status: 0
+      }).count();
+      if(result1.total > 0){
+        ctx.body = {
+          code: -2,
+          data: {},
+          message: '未归还书籍，不能删除'
+        }
+      }else {
+        let result2 = await db.collection('book').doc(event.id).remove()
+        ctx.body = {
+          code: 0,
+          data: {}
+        }
       }
     } catch (e) {
       console.error(e)
@@ -602,7 +637,7 @@ exports.main = async (event, context) => {
       let userArr = []
       let borrowArr = []
       let bookArr = []
-      let tTime = new Date().getTime() / 1000 + 100 * 24 * 60 * 60
+      let tTime = new Date().getTime() / 1000
 
       let result1 = await db.collection('borrow').where({
         status: 0,

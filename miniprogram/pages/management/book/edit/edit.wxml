@@ -1,61 +1,88 @@
 <!--miniprogram/pages/book/edit/edit.wxml-->
 <view class="container has-fixed-bottom">
-<form class="form-info">
-    <view class='input-item'>
-      <text class="input-item-label">ISBN</text>
-      <input type="text" id="isbn" class="input-item-text {{isEdit? 'disabled' : ''}}" value="{{book.isbn}}" placeholder='输入ISBN' bindblur="onBlur" disabled='{{isEdit}}' />
-      <i class="input-icon iconfont icon-search" catchtap="search"></i>
+  <view class="tab-list" wx:if="{{!isEdit && !isRecommend}}">
+    <view class="tab {{isMultiAdd? '' : 'current'}}" id="single" bindtap="switchTap">单个添加</view>
+    <view class="tab {{isMultiAdd? 'current' : ''}}" id="multiAdd" bindtap="switchTap">批量添加</view>
+  </view>
+  <form class="form-info" wx:if="{{!isMultiAdd}}">
+      <view class='input-item'>
+        <text class="input-item-label">ISBN</text>
+        <input type="text" id="isbn" class="input-item-text {{isEdit? 'disabled' : ''}}" value="{{book.isbn}}" placeholder='输入ISBN' bindinput="onInput" disabled='{{isEdit}}' />
+        <i class="input-icon iconfont icon-search" catchtap="search"></i>
+      </view>
+      <block wx:if="{{showBookInfo || isEdit}}">
+        <view class='input-item'>
+          <text class="input-item-label">书名</text>
+          <input type="text" id="title" class="input-item-text" value="{{book.title}}" placeholder='输入书名' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">作者</text>
+          <input type="text" id="author" class="input-item-text" value="{{book.author}}" placeholder='输入作者' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">译者</text>
+          <input type="text" id="translator" class="input-item-text" value="{{book.translator}}" placeholder='输入译者' bindinput="onInput" />
+        </view>
+        <view class='input-item' wx:if="{{!isRecommend}}">
+          <text class="input-item-label">数量</text>
+          <input type="text" id="num" class="input-item-text" value="{{book.num}}" placeholder='输入数量' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">图片</text>
+          <input type="text" id="image" class="input-item-text" value="{{book.image}}" placeholder='输入图片' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">出版社</text>
+          <input type="text" id="publisher" class="input-item-text" value="{{book.publisher}}" placeholder='输入出版社' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">所有者</text>
+          <input type="text" id="owner" class="input-item-text" value="{{book.owner}}" placeholder='输入所有者' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">书架位置</text>
+          <input type="text" id="place" class="input-item-text" value="{{book.place}}" placeholder='输入书架位置' bindinput="onInput" />
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">内容简介</text>
+          <textarea id="content_intro" class="input-item-area" value="{{book.content_intro}}" placeholder='输入内容简介' bindinput="onInput"></textarea>
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">作者简介</text>
+          <textarea id="author_intro" class="input-item-area" value="{{book.author_intro}}" placeholder='输入作者简介' bindinput="onInput"></textarea>
+        </view>
+        <view class='input-item'>
+          <text class="input-item-label">目录</text>
+          <textarea id="catalog" class="input-item-area" value="{{book.catalog}}" placeholder='输入目录' bindinput="onInput"></textarea>
+        </view>
+      </block>
+  </form>
+  <view  wx:if="{{isMultiAdd}}" class="multi-box">
+    <form class="form-info">
+      <view class='input-item'>
+        <text class="input-item-label">ISNB(s)</text>
+        <textarea id="multiIsbn" class="input-item-area big" value="{{multiIsbn}}" maxlength="-1" placeholder='输入ISBN(多个isbn以“,”隔开)' bindinput="updateMultiIsbn"></textarea>
+      </view>
+    </form>
+    <view class="info-box" wx:if="{{saveList.length>0}}">
+      <view class="info-type">保存成功：</view>
+      <view class="data-info" wx:for="{{saveList}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
     </view>
-    <block wx:if="{{showBookInfo || isEdit}}">
-      <view class='input-item'>
-        <text class="input-item-label">书名</text>
-        <input type="text" id="title" class="input-item-text" value="{{book.title}}" placeholder='输入书名' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">作者</text>
-        <input type="text" id="author" class="input-item-text" value="{{book.author}}" placeholder='输入作者' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">译者</text>
-        <input type="text" id="translator" class="input-item-text" value="{{book.translator}}" placeholder='输入译者' bindblur="onBlur" />
-      </view>
-      <view class='input-item' wx:if="{{!isRecommend}}">
-        <text class="input-item-label">数量</text>
-        <input type="text" id="num" class="input-item-text" value="{{book.num}}" placeholder='输入数量' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">图片</text>
-        <input type="text" id="image" class="input-item-text" value="{{book.image}}" placeholder='输入图片' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">出版社</text>
-        <input type="text" id="publisher" class="input-item-text" value="{{book.publisher}}" placeholder='输入出版社' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">所有者</text>
-        <input type="text" id="owner" class="input-item-text" value="{{book.owner}}" placeholder='输入所有者' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">书架位置</text>
-        <input type="text" id="place" class="input-item-text" value="{{book.place}}" placeholder='输入书架位置' bindblur="onBlur" />
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">内容简介</text>
-        <textarea id="content_intro" class="input-item-area" value="{{book.content_intro}}" placeholder='输入内容简介' bindblur="onBlur"></textarea>
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">作者简介</text>
-        <textarea id="author_intro" class="input-item-area" value="{{book.author_intro}}" placeholder='输入作者简介' bindblur="onBlur"></textarea>
-      </view>
-      <view class='input-item'>
-        <text class="input-item-label">目录</text>
-        <textarea id="catalog" class="input-item-area" value="{{book.catalog}}" placeholder='输入目录' bindblur="onBlur"></textarea>
-      </view>
-    </block>
-</form>
-  <view class="btn-box">
-    <button class="btn" wx:if="{{!isEdit && !isRecommend}}" bindtap="addBook">添加</button>
+    <view class="info-box" wx:if="{{searchError.length>0}}">
+      <view class="info-type">搜索图书信息错误：</view>
+      <view class="err-info" wx:for="{{searchError}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+    </view>
+    <view class="info-box" wx:if="{{submitError.length>0}}">
+      <view class="info-type">保存异常：</view>
+      <view class="err-info" wx:for="{{submitError}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+    </view>
+  </view>
+  <view class="btn-box" wx:if="{{!isMultiAdd}}">
+    <button class="btn" wx:if="{{!isEdit && !isRecommend}}" bindtap="singleAdd">添加</button>
     <button class="btn" wx:if="{{isEdit && !isRecommend}}" bindtap="editBook">提交</button>
     <button class="btn" wx:if="{{isRecommend}}" bindtap="doRecommend">提交推荐</button>
+  </view>
+  <view class="btn-box" wx:if="{{isMultiAdd}}">
+    <button class="btn" wx:if="{{!isEdit && !isRecommend}}" bindtap="multiAdd">批量添加</button>    
   </view>
 </view>

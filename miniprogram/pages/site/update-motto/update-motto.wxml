@@ -1,0 +1,13 @@
+<!--miniprogram/pages/site/setting/update-motto/update-motto.wxml-->
+<view class="container">
+  <view class="logo-box"><image class="logo" src="/images/logo.png"></image></view>
+  <form class="form-info">
+    <view class='input-item input-item02'>
+      <textarea id="motto" class="input-item-area input-item-area02" value="{{user.motto}}" placeholder='输入座右铭' bindinput="onInput" maxlength='50'></textarea>
+    </view>
+  </form>
+  <view class="form-btn">
+    <button class="btn" bindtap="update">提交</button>
+  </view>
+</view>
+    

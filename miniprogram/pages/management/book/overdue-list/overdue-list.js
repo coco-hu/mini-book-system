@@ -1,6 +1,7 @@
 // miniprogram/pages/management/book/overdue-list/overdue-list.js
 
 const myRequest = require('../../../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -23,9 +24,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    wx.setNavigationBarTitle({
-      title: '逾期书籍列表',
-    })
+
   },
 
   /**
@@ -39,22 +38,35 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.getOverList()
+  },
+
+  /**
+   * 拉取逾期列表
+   */
+  getOverList: function() {
     let _self = this
 
+    wx.showLoading()
     myRequest.call('book', {
       $url: "overdue-list",
     }).then(res => {
       console.log(res)
+      wx.hideLoading()
       _self.setData({
         booklist: res.list,
         booklistLength: res.list.length
       })
     }).catch(err => {
       console.error(err)
+      wx.hideLoading()
       _self.setData({
         booklist: [],
         booklistLength: 0
       })
+      if (!app.checkLogin(err.code)) {
+        return
+      }
       wx.showModal({
         content: '拉取数据失败',
       })

@@ -2,7 +2,6 @@
   "cloud": true,
   "pages": [
     "pages/index/index",
-    "pages/scan/scan",
     "pages/myList/myList",
     "pages/book/detail/detail",
     "pages/book/h-list/h-list",
@@ -13,8 +12,11 @@
     "pages/management/book/recommend-list/recommend-list",
     "pages/book/recommend/recommend",
     "pages/management/book/overdue-list/overdue-list",
-    "pages/a/a",
-    "pages/site/login/login"
+    "pages/site/login/login",
+    "pages/site/setting/setting",
+    "pages/site/update-password/update-password",
+    "pages/site/update-motto/update-motto",
+    "pages/book/not-found/not-found"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

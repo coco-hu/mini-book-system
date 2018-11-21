@@ -3,14 +3,20 @@
   <view class="logo-box"><image class="logo" src="/images/logo.png"></image></view>
   <form class="form-info">
     <view class='input-item input-item02'>
-      <input type="text" id="username" class="input-item-text input-item-text02" value="{{user.username}}" placeholder='用户名' bindblur="onBlur"  />
+      <input type="text" id="username" class="input-item-text input-item-text02" value="{{user.username}}" placeholder='用户名' bindinput="onInput"  />
     </view>
     <view class='input-item input-item02'>
-      <input type="text" id="password" class="input-item-text input-item-text02" value="{{user.password}}" placeholder='密码' bindblur="onBlur"  />
+      <input type="password" id="password" class="input-item-text input-item-text02" value="{{user.password}}" placeholder='密码' bindinput="onInput"  />
     </view>
   </form>
   <view class="form-btn">
-    <button class="btn" bindtap="login">登录</button>
+    <button class="btn" open-type="getUserInfo" bindgetuserinfo="login">登录</button>
+    <view class="link" bindtap="goIndex">
+      <text>取消登录</text>
+    </view>
   </view>
 </view>
+
+
+            <!-- <button class="userinfo-nickname" wx:if="{{!logged}}"  bindgetuserinfo="bindGetUserInfo">点击测试登录接口</button> -->
     

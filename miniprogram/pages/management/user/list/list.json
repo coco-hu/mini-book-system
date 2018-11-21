@@ -1,5 +1,6 @@
 {
   "usingComponents": {
     "float-add": "/components/float-add/float-add"
-  }
+  },
+  "navigationBarTitleText": "用户管理"
 }

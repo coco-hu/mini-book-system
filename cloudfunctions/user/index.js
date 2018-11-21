@@ -1,6 +1,7 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
+const MD5 = require("blueimp-md5")
 
 cloud.init()
 
@@ -15,8 +16,10 @@ exports.main = async (event, context) => {
     let result = {}
     if (event.sessionId) {
       let currentTime = new Date().getTime() / 1000
-      result = await db.collection('session').doc(event.sessionId).get()
-      if (result.data && result.data.expireTime >= currentTime) {
+      result = await db.collection('session').where({
+        key: MD5(event.sessionId)
+      }).get()
+      if (result.data && result.data[0] && result.data[0].expireTime >= currentTime) {
         await next()
       } else {
         ctx.body = {
@@ -80,8 +83,9 @@ exports.main = async (event, context) => {
 
   app.router('add', handleAuth, async (ctx) => {
     try {
+      let user = event.data;
       let result1 = await db.collection('user').where({
-        username: event.data.username
+        username: user.username
       }).count()
 
       if (result1.total > 0) {
@@ -92,8 +96,10 @@ exports.main = async (event, context) => {
         }
         return
       }
+      
+      user.password = MD5(user.password)
       let result2 = await db.collection('user').add({
-          data: event.data
+          data: user
       })
 
       ctx.body = {
@@ -134,10 +140,22 @@ exports.main = async (event, context) => {
 
   app.router('delete', handleAuth, async (ctx) => {
     try {
-      let result = await db.collection('user').doc(event.id).remove()
-      ctx.body = {
-        code: 0,
-        data: {},
+      let result1 = await db.collection('borrow').where({
+        userId: event.id,
+        status: 0
+      }).count();
+      if (result1.total > 0) {
+        ctx.body = {
+          code: -2,
+          data: {},
+          message: '该用户有未归还书籍，不能删除'
+        }
+      } else {
+        let result2 = await db.collection('user').doc(event.id).remove()
+        ctx.body = {
+          code: 0,
+          data: {},
+        }
       }
     } catch (e) {
       console.error(e)

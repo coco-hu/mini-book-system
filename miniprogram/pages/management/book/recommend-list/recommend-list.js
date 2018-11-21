@@ -1,6 +1,7 @@
 // miniprogram/pages/management/book/h-list/h-list.js
 
 const myRequest = require('../../../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -16,18 +17,31 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.getRecommendList()
+  },
+
+  /**
+   * 拉取推荐列表
+   */
+  getRecommendList: function() {
     let _self = this
 
+    wx.showLoading()
     myRequest.call('book', {
       $url: "all-recommend-list",
     }).then(res => {
       console.log(res)
+      wx.hideLoading()
       _self.setData({
         booklist: res.list,
         booklistLength: res.list.length
       })
     }).catch(err => {
       console.error(err)
+      if (!app.checkLogin(err.code)) {
+        return
+      }
+      wx.hideLoading()
       _self.setData({
         booklistLength: 0
       })
@@ -115,8 +129,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    wx.setNavigationBarTitle({
-      title: '推荐书籍列表',
-    })
+    
   }
 })

@@ -15,10 +15,11 @@ let call = (name, data) => {
   }).then(res => {
     console.log("myReques: ", res)
     let result = res.result
-    if(result && result.code === 0){
+    if(result && +result.code === 0){
       return Promise.resolve(result.data)
+    } else {
+      return Promise.reject(result)
     }
-    return Promise.reject(result)
   }, err => {
     return Promise.reject(err)
   })

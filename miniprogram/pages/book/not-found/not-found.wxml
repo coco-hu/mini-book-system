@@ -1,0 +1,8 @@
+<!--miniprogram/pages/book/not-found/not-found.wxml-->
+
+<view class="container">
+  <image class="img" src="/images/no_book.jpg" />
+  <view class="back" bindtap='goIndex'>
+      <text>返回首页</text>
+  </view>
+</view>

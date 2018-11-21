@@ -2,12 +2,13 @@
 <view class="container">
   <view class="user-info">
     <view class="user-logo">
-      <image class="img" src="{{avatarUrl}}" />
+      <image class="img" src="{{userInfo.avatarUrl || '/images/anonymous.jpg'}}" />
     </view>
     <view class="user-text">
       <text class="txt01">{{userInfo.nickName}}</text>
-      <text class="txt02">学业才识,不日进,则日退。</text>
+      <text class="txt02">{{userInfo.motto}}</text>
     </view>
+    <i class="set iconfont icon-setup" catchtap="toSetting"></i>
   </view>
 
 
@@ -25,7 +26,6 @@
       <text class="summary">推荐</text>
     </view>
   </view>
-
 
   <view class="my-list">
     <view class="item" id="current" bindtap="toPage">
@@ -45,7 +45,7 @@
     </view>
   </view>
 
-  <view class="my-list">
+  <view class="my-list" wx:if="{{userInfo.isAdmin}}">
     <view class="item" id="book-management" bindtap="toPage">
       <em class="icon iconfont icon-ziliaoshouce-xianxing orange"></em>
       <text class="txt">图书管理</text>
@@ -58,7 +58,7 @@
     </view>
   </view>
 
-  <view class="my-list">
+  <view class="my-list" wx:if="{{userInfo.isAdmin}}">
     <view class="item" id="recommend-list" bindtap="toPage">
       <em class="icon iconfont icon-danju-xianxing dark-orange"></em>
       <text class="txt">用户推荐</text>

@@ -12,5 +12,23 @@ App({
     }
 
     this.globalData = {}
+  },
+  isLogin: function () {
+    let userId = wx.getStorageSync('userId')
+    let username = wx.getStorageSync('username')
+    if(userId && username){
+      return true
+    }
+    return false
+  },
+  checkLogin: function (code) {
+    if (+code === 101) {
+      wx.navigateTo({
+        url: '/pages/site/login/login',
+      });
+      return false
+    }else {
+      return true
+    }
   }
 })

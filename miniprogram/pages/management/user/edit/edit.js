@@ -1,6 +1,14 @@
 // miniprogram/pages/user/edit/edit.js
 
 const myRequest = require('../../../../api/myRequest')
+const MD5 = require('../../../../utils/md5')
+const app = getApp();
+const defaultUser = {
+  username: '',
+  userType: 0,
+  password: '123456',
+  motto: 'Where there\'s a will there\'s a way. '
+}
 
 Page({
 
@@ -9,17 +17,17 @@ Page({
    */
   data: {
     userTypeList:['普通用户', '管理员'],
-    user: {
-      userType: 0,
-      password: '123456',
-      motto: '学如才识，不日进，则日退。'
-    }
+    user: {},
+    multiUser: 'aa,bb,cc,qq,ss,ff,hh,jj,ii,77,88'
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.setData({
+      user: JSON.parse(JSON.stringify(defaultUser))
+    })
     if (!options.id) {
       return
     }
@@ -27,31 +35,62 @@ Page({
     wx.setNavigationBarTitle({
       title: ('编辑用户'),
     })
-    let _self = this
 
     this.setData({
       isEdit: true
     })
+
+    this.getUserInfo(options.id)
+  },
+  /**
+   * 拉取用户详情
+   */
+  getUserInfo: function(id) {
+    let _self = this
+    wx.showLoading()
     myRequest.call('user', {
       $url: "detail",
-      id: options.id
+      id: id
     }).then(res => {
       console.log(res)
+      wx.hideLoading()
       _self.setData({
         user: res.user
       })
     }).catch(err => {
       console.log(err)
+      if (!app.checkLogin(err.code)) {
+        return
+      }
+      wx.hideLoading()
       wx.showModal({
         content: '无法拉取用户信息',
       })
     })
   },
 
+  updateMultiUser: function (e) {
+    let value = e.detail.value
+    this.setData({
+      multiUser: value
+    })
+  },
+
+  /**
+   * 切换添加方式
+   */
+  switchTap: function (e) {
+    let type = e.currentTarget.id
+    this.setData({
+      isMultiAdd: type === 'multiAdd'
+    })
+  },
+
+
   /**
    * 同步表单数据
    */
-  onBlur: function (e) {
+  onInput: function (e) {
     let key = e.currentTarget.id
     let value = e.detail.value
 
@@ -72,34 +111,73 @@ Page({
   },
 
   /**
-   * 新增
+   *  单个新增
    */
-  addUser: function (e) {
+  singleAdd: function (e) {
     let _self = this
     let aData = this.data.user
-    
-    myRequest.call('user', {
-      $url: "add",
-      data: aData
-    }).then(res => {
-      console.log(res)
-      wx.showToast({
-        title: '添加成功',
-        complete: () => {
-          setTimeout(()=> {
-            wx.navigateBack({
-              url: '../list/list'
-            })
-          }, 1000)
-        }
+    if(!aData.username){
+      wx.showModal({
+        content: '用户名不能为空',
+        showCancel: false
       })
-    }, err => {
-      console.log(err)
+      return;
+    }
+    wx.showLoading()
+    this.addUser(aData).then(res => {
+      wx.hideLoading()
+      wx.navigateBack({
+        url: '../list/list'
+      })
+        
+    }).catch(err => {
+      if (!app.checkLogin(err.code)) {
+        return
+      }
+      wx.hideLoading()
       wx.showModal({
         title: '提示',
         content: err.message,
         showCancel: false
       })
+    })
+  },
+
+  /**
+   * 新增
+   */
+  addUser: function (data) {
+    let _self = this
+    let isMultiAdd = this.data.isMultiAdd
+    let aData = JSON.parse(JSON.stringify(data))
+    console.log('====',aData.password)
+    aData.password = MD5(aData.password)
+    console.log(aData.password)
+    return myRequest.call('user', {
+      $url: "add",
+      data: aData
+    }).then(res => {
+      console.log(res)
+      if (isMultiAdd) {
+        let saveList = _self.data.saveList
+        saveList.push(aData.username)
+        _self.setData({
+          saveList: saveList
+        })
+      }
+      return Promise.resolve(res)
+    }, err => {
+      console.log(err)
+      if (!isMultiAdd) {
+        return Promise.reject(err);
+      }else{
+        let errList = _self.data.submitError
+        errList.push(`${aData.username}: ${err.message}`)
+        _self.setData({
+          submitError: errList
+        })
+        return Promise.resolve(`addUser - fail:${aData.username}`)
+      }
     })
   },
 
@@ -113,6 +191,7 @@ Page({
 
     console.log(eData)
 
+    wx.showLoading()
     myRequest.call('user', {
       $url: "edit",
       id: _self.data.user._id,
@@ -120,19 +199,48 @@ Page({
       userType: eData.userType
     }).then(res => {
       console.log(res)
-      wx.showToast({
-        title: '编辑成功',
-        complete: res => {
-          wx.navigateBack({
-            delta: 1
-          })
-        }
+      wx.hideLoading()
+      
+      wx.navigateBack({
+        delta: 1
       })
     }).catch(err => {
       console.log(err)
+      if (!app.checkLogin(err.code)) {
+        return
+      }
+      wx.hideLoading()
       wx.showModal({
         content: '操作失败',
       })
+    })
+  },
+
+  /**
+   * 批量添加
+   */
+  multiAdd: function () {
+    let users = this.data.multiUser.split([','])
+    this.setData({
+      submitError: [],
+      saveList: []
+    })
+    wx.showLoading()
+    Promise.all(
+      users.map(item => {
+        if(!item){
+          return;
+        }
+        let aData = JSON.parse(JSON.stringify(defaultUser))
+        aData.username = item
+        this.addUser(aData)
+      })
+    ).then(res => {
+      console.log(res)
+      wx.hideLoading()
+    }).catch(err => {
+      console.log(err)
+      wx.hideLoading()
     })
   }
 })

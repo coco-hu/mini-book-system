@@ -9,8 +9,8 @@
         <view class="author">{{item.author}}</view>
         <view class="available">
           当前可借数量：
-          <text class="green" wx:if="{{item.available_num > 0}}">{{item.available_num}}</text>
-          <text class="red" wx:if="{{item.available_num == 0}}">0</text>
+          <text class="green" wx:if="{{item.borrowed_num < item.num}}">{{item.num - item.borrowed_num}}</text>
+          <text class="red" wx:if="{{item.borrowed_num >= item.num}}">0</text>
         </view>
       </view>
     </view>
@@ -24,7 +24,7 @@
   <view class="search-gap"></view>
   <!-- 搜索 -->
   <view class="search-box">
-    <input type="text" id="search" class="search-input" value="{{currentSearchKey}}" confirm-type='search' maxlength='20' auto-focus placeholder='书名/作者/ISBN' bindconfirm='search' bindblur='searchBlur' />
+    <input type="text" id="search" class="search-input" value="{{currentSearchKey}}" confirm-type='search' maxlength='20' auto-focus placeholder='书名/作者/ISBN' bindconfirm='search' bindinput='onInput' />
     <i class="search-icon iconfont icon-search" catchtap="search"></i>
   </view>
 </view>

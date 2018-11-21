@@ -1,0 +1,15 @@
+<!--miniprogram/pages/site/setting/setting.wxml-->
+<view class="container">
+  <view class="my-list">
+    <view class="item" id="password" bindtap="toPage">
+      <text class="txt">修改密码</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="motto" bindtap="toPage">
+      <text class="txt">修改座右铭</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+  </view>
+
+  <view class="logout" bindtap="logout">退出登录</view>
+</view>

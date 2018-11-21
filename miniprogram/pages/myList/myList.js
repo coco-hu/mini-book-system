@@ -1,6 +1,7 @@
 // miniprogram/pages/myList/myList.js
 
 const myRequest = require('../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -10,7 +11,12 @@ Page({
   data: {
     borrowNum: 0,
     expiredNum: 0,
-    recommendNum: 0
+    recommendNum: 0,
+    userInfo: {
+      nickName: '未知',
+      avatarUrl: '',
+      motto: 'Where there\'s a will there\'s a way. '
+    }
   },
 
   /**
@@ -23,10 +29,8 @@ Page({
           wx.getUserInfo({
             success: res => {
               this.setData({
-                avatarUrl: res.userInfo.avatarUrl,
-                userInfo: res.userInfo
+                'userInfo.avatarUrl': res.userInfo.avatarUrl,
               })
-              console.log(res)
             }
           })
         }
@@ -37,12 +41,35 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
-    let _self = this
+    let sessionId = wx.getStorageSync('sessionId')
+    let username = wx.getStorageSync('username')
+    let userType = wx.getStorageSync('userType')
+    let motto = wx.getStorageSync('motto')
 
+    this.setData({
+      'userInfo.nickName': username,
+      'userInfo.motto': motto,
+      'userInfo.isAdmin': +userType === 1
+    })
+
+    if (!sessionId){
+      wx.navigateTo({
+        url: '/pages/site/login/login',
+      })
+      return;
+    }
+    this.getCountInfo()
+  },
+
+  /**
+   * 获取统计数据
+   */
+  getCountInfo: function() {
+    let _self = this
+    let userId = wx.getStorageSync('userId')
     myRequest.call('book', {
       $url: "count-sum",
-      userId: "9787500656524",
+      userId: userId,
       status: 0
     }).then(res => {
       console.log(res)
@@ -53,12 +80,24 @@ Page({
         recommendNum: data.recommendNum
       })
     }).catch(err => {
+      if (!app.checkLogin(err.code)) {
+        return
+      }
       console.log("==", err)
       wx.showModal({
         content: '拉取数据失败',
       })
     })
 
+  },
+
+  /**
+   * 设置页
+   */
+  toSetting: function () {
+    wx.navigateTo({
+      url: '/pages/site/setting/setting'
+    })
   },
 
   /**

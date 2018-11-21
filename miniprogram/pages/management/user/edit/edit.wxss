@@ -1,1 +1,39 @@
 /* miniprogram/pages/user/edit/edit.wxss */
+.tab-list {
+  width: 100%;
+  text-align: center;
+  margin:12px 0;
+}
+.tab-list .tab {
+  width:60px;
+  display:inline-block;
+  line-height:32px;
+  background:#fff;
+  padding:0 6px;
+  border:1px solid #3378dd;
+}
+.tab-list .tab.current {
+  background: #3378dd;
+  color: #fff;
+}
+.input-item-area.big {
+  height: 160px;
+}
+.multi-box {
+  width: 100%;
+}
+.info-box {
+  margin-top: 14px;
+  background: #fff;
+  padding: 6px 14px;
+}
+.info-box .info-type {
+  line-height: 28px;
+}
+.info-box .err-info {
+  line-height: 20px;
+  color: red;
+}
+.info-box .data-info {
+  line-height: 20px;
+}

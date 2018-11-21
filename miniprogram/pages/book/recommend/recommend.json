@@ -1,5 +1,6 @@
 {
   "usingComponents": {
     "float-add": "/components/float-add/float-add"
-  }
+  },
+  "navigationBarTitleText": "我的推荐"
 }

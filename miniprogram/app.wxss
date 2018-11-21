@@ -105,6 +105,18 @@ page {
   margin-bottom: 4px;
 }
 
+.logo-box {
+  width: 100%;
+  text-align: center;
+  padding-bottom: 20px;
+  margin-top: 50px;
+}
+.logo-box .logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 100px;
+}
+
 .green {
   color: #009C00 !important;
 }

@@ -1,7 +1,9 @@
 // miniprogram/pages/book/detail/detail.js
 
 const utils = require('../../../utils/utils')
+const localRequest = require('../../../api/localRequest')
 const myRequest = require('../../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -10,7 +12,7 @@ Page({
    */
   data: {
     id: '',
-    isBorrowed: false,
+    isLogin: false,
     book: {
     }
   },
@@ -30,21 +32,34 @@ Page({
   onShow: function () {
     let _self = this
 
-    myRequest.call('book', {
-      $url: "detail",
-      id: this.data.id,
-      userId: 'W69vv_D0YIt7pmfH'
+    this.setData({
+      isLogin: app.isLogin()
+    })
+    this.getBookDetail()
+  },
+
+  /**
+   * 拉取图书信息
+   */
+  getBookDetail: function() {
+    wx.showLoading()
+    localRequest.getBookDetail({
+      id: this.data.id
     }).then(res => {
       console.log(res)
+      wx.hideLoading()
       this.setData({
-        book: res.book,
-        isBorrowed: res.isBorrowed
+        book: res.book
       })
       wx.setNavigationBarTitle({
         title: (this.data.book.title || '图书详情'),
       })
     }).catch(err => {
       console.log(err)
+      wx.hideLoading()
+      if (!app.checkLogin(err.code)) {
+        return
+      }
       wx.showModal({
         content: '无法拉取图书信息',
       })
@@ -62,7 +77,8 @@ Page({
     let eTime = utils.getExpireTime(sTime, 60)
     let eDate = utils.formatTime(eTime, 'Y-M-D')
 
-    if (book.available_num < 1){
+    let userId = wx.getStorageSync('userId')
+    if (book.borrowed_num >= book.num){
       return false
     }
     wx.showModal({
@@ -72,34 +88,30 @@ Page({
         if(res.confirm) {
           let borrowData = {
             bookId: book._id,
-            userId: 'W69vv_D0YIt7pmfH',
+            userId: userId,
             status: 0,
             start_date: sDate,
             start_time: sTime,
             expire_date: eDate,
             expire_time: eTime
           }
-          let available_num = book.available_num - 1
 
           wx.showLoading()
           myRequest.call('book', {
             $url: "borrow",
-            borrowData,
-            available_num
+            borrowData
           }).then(res => {
             console.log(res)
             wx.hideLoading()
-            wx.showToast({
-              title: '借阅成功',
-              complete: () => {
-                _self.onShow()
-              }
-            })
+            _self.onShow()
           }).catch(err => {
             console.log('====: ', err)
+            if (!app.checkLogin(err.code)) {
+              return
+            }
             wx.hideLoading()
             wx.showModal({
-              content: '系统错误，请稍后再试',
+              content: err && err.message || '系统错误，请稍后再试',
             })
           })
         }

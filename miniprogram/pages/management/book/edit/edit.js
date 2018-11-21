@@ -2,6 +2,7 @@
 
 let utils = require('../../../../utils/utils')
 const myRequest = require('../../../../api/myRequest')
+const app = getApp();
 
 Page({
 
@@ -11,13 +12,14 @@ Page({
   data: {
     showBookInfo: false,
     isRecommend: false,
-    userId: 'W69vv_D0YIt7pmfH',
+    userId: '',
+    multiIsbn: '9787801887856,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524,9787500656524',
     book: {
       isbn: 9787500656524,
       owner: 'web组',
       place: '9F B办公区靠窗',
       num: 1,
-      available_num: 1
+      borrowed_num: 0
     }
   },
 
@@ -26,6 +28,9 @@ Page({
    */
   onLoad: function (options) {
     if (options.type === 'recommend'){
+      wx.setNavigationBarTitle({
+        title: ('推荐书籍'),
+      })
       this.setData({
         isRecommend: true
       })
@@ -36,20 +41,28 @@ Page({
     }
 
     wx.setNavigationBarTitle({
-      title: ('编辑图书'),
+      title: ('编辑书籍'),
     })
     
-    let _self = this
-
+    
     this.setData({
       isEdit: true
     })
-  
+    this.getBookInfo(options.id)
+  },
+  /**
+   * 获取图书信息
+   */
+  getBookInfo: function (id) {
+    let _self = this
+
+    wx.showLoading()
     myRequest.call('book', {
       $url: "detail",
-      id: options.id
+      id: id
     }).then(res => {
       console.log(res)
+      wx.hideLoading()
       _self.setData({
         book: res.book,
        'book.isbn': res.book.isbn13,
@@ -57,16 +70,36 @@ Page({
       
     }).catch(err => {
       console.log(err)
+      wx.hideLoading()
+      if (!app.checkLogin(err.code)) {
+        return
+      }
       wx.showModal({
         content: '无法拉取图书信息',
       })
     })
   },
+  
+  /**
+   * 切换添加方式
+   */
+  switchTap: function(e) {
+    let type = e.currentTarget.id
+    this.setData({
+      isMultiAdd: type === 'multiAdd'
+    })
+  },
 
+  updateMultiIsbn: function(e) {
+    let value = e.detail.value
+    this.setData({
+      multiIsbn: value
+    })
+  },
   /**
    * 同步输入数据
    */
-  onBlur: function (e) {
+  onInput: function (e) {
     console.log(e.currentTarget.id, e.detail.value)
     let key = e.currentTarget.id
     let value = e.detail.value
@@ -84,82 +117,152 @@ Page({
   search: function (e) {
     let _self = this
     wx.showLoading()
-    wx.request({
-      url: 'https://douban.uieee.com/v2/book/isbn/' + this.data.book.isbn,
-      header: {
-        'content-type': 'json'
-      },
-      success: res => {
-        wx.hideLoading()
-        if(res.statusCode !== 200){
-          wx.showModal({
-            title: '提示',
-            content: res.data.msg,
-          })
-          _self.setData({
-            showBookInfo: false
-          })
-          return
-        }
+    this.getBookDetail(this.data.book.isbn).then(res=> {
+      wx.hideLoading()
+      let data = res.data
+      _self.setData({
+        showBookInfo: true,
+        'book.author': data.author.join(' / '),
+        'book.author_intro': data.author_intro,
+        'book.image': data.image,
+        'book.title': data.title,
+        'book.publisher': data.publisher,
+        'book.translator': data.translator.join(' / '),
+        'book.tags': data.tags.join(' | '),
+        'book.content_intro': data.summary,
+        'book.isbn10': data.isbn10,
+        'book.isbn13': data.isbn13,
+        'book.catalog': data.catalog
+      })
+    }).catch(err => {
+      wx.hideLoading()
+      console.log(err)
+      return;
+      wx.showModal({
+        title: '提示',
+        content: err,
+      })
+      _self.setData({
+        showBookInfo: false
+      })
+    })
+  },
 
-        let data = res.data
-        _self.setData({
-          showBookInfo: true,
-          'book.author': data.author.join(' / '),
-          'book.author_intro': data.author_intro,
-          'book.image': data.image,
-          'book.title': data.title,
-          'book.publisher': data.publisher,
-          'book.translator': data.translator.join(' / '),
-          'book.tags': data.tags.join(' | '),
-          'book.content_intro': data.summary,
-          'book.isbn10': data.isbn10,
-          'book.isbn13': data.isbn13,
-          'book.catalog': data.catalog
-        })
-      },
-      fail: err => {
-        wx.showModal({
-          content: '查询失败',
-          showCancel: false
-        })
-        _self.setData({
-          showBookInfo: false
-        })
-      }
+  getBookDetail: function(isbn) {
+    let _self = this
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: 'https://douban.uieee.com/v2/book/isbn/' + isbn,
+        header: {
+          'content-type': 'json'
+        },
+        success: res => {
+          if(!_self.data.isMultiAdd){
+            if (res.statusCode !== 200) {
+              reject(res.data.msg);
+            }else{
+              resolve(res);
+            }
+          }else{
+            if (res.statusCode !== 200) {
+              let errList = _self.data.searchError
+              errList.push(isbn)
+              _self.setData({
+                searchError: errList
+              })
+              resolve(`getBookDetailsuccess - fail: ${isbn}`)
+            } else {
+              let data = res.data
+              let aData = {
+                owner: 'web组',
+                place: '9F B办公区靠窗',
+                num: 1,
+                borrowed_num: 0,
+                author: data.author.join(' / '),
+                author_intro: data.author_intro,
+                image: data.image,
+                title: data.title,
+                publisher: data.publisher,
+                translator: data.translator.join(' / '),
+                tags: data.tags.join(' | '),
+                content_intro: data.summary,
+                isbn: isbn,
+                isbn10: data.isbn10,
+                isbn13: data.isbn13,
+                catalog: data.catalog
+              }
+              resolve(_self.addBook(aData))
+            }
+          }
+        },
+        fail: err => {
+          if (!_self.data.isMultiAdd) {
+            reject('查询失败')
+          } else {
+            let errList = _self.data.searchError
+            errList.push(isbn)
+            _self.setData({
+              searchError: errList
+            })
+            resolve(`getBookDetailfail - fail: ${isbn}`)
+          }
+        }
+      })
+    })
+  },
+
+  /**
+   * 单个提交
+  */
+  singleAdd: function(e) {
+    wx.showLoading()
+    this.addBook(this.data.book).then(res => {
+      wx.hideLoading()
+      wx.navigateBack({
+        url: '../list/list'
+      }) 
+    }).catch(err => {
+      wx.hideLoading()
+      wx.showModal({
+        title: '提示',
+        content: err.message,
+        showCancel: false
+      })
     })
   },
 
   /**
    * 添加书籍
    */
-  addBook: function(e) {
+  addBook: function (aData) {
     let _self = this
-    let aData = this.data.book
-    aData.available_num = aData.num
     aData.status = "ONSHELF"
     
-    myRequest.call('book', {
+    return myRequest.call('book', {
       $url: "add",
       data: aData,
       isbn: aData.isbn
     }).then(res => {
-      wx.showToast({
-        title: '添加成功',
-        complete: () => {
-          setTimeout(() => {
-            wx.navigateBack({
-              url: '../list/list'
-            })
-          }, 1000)
-        }
-      })
+      if(_self.data.isMultiAdd) {
+        let saveList = _self.data.saveList
+        saveList.push(aData.isbn)
+        _self.setData({
+          saveList: saveList
+        })
+      }
+      return Promise.resolve(res)
     }, (err) => {
-      wx.showModal({
-        title: '提示',
-        content: err.message,
-        showCancel: false
-      })
+      if (!_self.data.isMultiAdd) {
+        return Promise.reject(err)
+      }else{
+        let errList = _self.data.submitError
+        errList.push(`${aData.isbn}: ${err.message}`)
+        _self.setData({
+          submitError: errList
+        })
+        return Promise.resolve(`addBook - fail:${aData.isbn}`)
+      }
+      
     })
   },
 
@@ -178,22 +281,24 @@ Page({
 
     console.log(eData)
 
+    wx.showLoading()
     myRequest.call('book', {
       $url: "edit",
       data: eData,
       bookId: _self.data.book._id
     }).then(res => {
       console.log(res)
-      wx.showToast({
-        title: '编辑成功',
-        complete: res => {
-          wx.navigateBack({
-            delta: 1
-          })
-        }
+      wx.hideLoading()
+
+      wx.navigateBack({
+        delta: 1
       })
     }).catch(err => {
       console.log(err)
+      if (!app.checkLogin(err.code)) {
+        return
+      }
+      wx.hideLoading()
       wx.showModal({
         content: '操作失败',
       })
@@ -207,37 +312,62 @@ Page({
     let _self = this
     let aData = this.data.book
     aData.num = 0
-    aData.available_num = 0
     aData.status = "PENDING"
     let rTime = new Date().getTime() / 1000
     let rDate = utils.formatTime(rTime, 'Y-M-D')
+    let userId = wx.getStorageSync('userId')
 
+    wx.showLoading()
     myRequest.call('book', {
       $url: "recommend",
       isbn: aData.isbn,
       data: aData,
-      userId: 'W69vv_D0YIt7pmfH',
+      userId: userId,
       date: rDate
     }).then(res => {
       console.log(res)
-      wx.showToast({
-        title: '提交成功',
-        complete: () => {
-          setTimeout(() => {
-            wx.navigateBack({
-              url: '../list/list'
-            })
-          }, 1000)
-        }
+      wx.hideLoading()
+      wx.navigateBack({
+        url: '../list/list'
       })
     }).catch(err => {
       console.log(err)
+      if (!app.checkLogin(err.code)) {
+        return
+      }
+      wx.hideLoading()
       wx.showModal({
         title: '提示',
         content: err.message,
         showCancel: false
       })
     })
+  },
+
+  /**
+   * 批量添加
+   */
+  multiAdd: function() {
+    let isbns = this.data.multiIsbn.split([','])
+    this.setData({
+      searchError: [],
+      submitError: [],
+      saveList: []
+    })
+    wx.showLoading()
+    Promise.all(
+      isbns.map(item => {
+        if (!item) {
+          return;
+        }
+        this.getBookDetail(item)
+      })
+    ).then(res=> {
+      console.log(res)
+      wx.hideLoading()
+    }).catch(err => {
+      console.log(err)
+      wx.hideLoading()
+    })
   }
-  
 })

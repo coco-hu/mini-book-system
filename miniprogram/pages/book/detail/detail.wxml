@@ -1,5 +1,5 @@
 <!--miniprogram/pages/book/detail/detail.wxml-->
-<view class="container {{book.available_num > 0? 'has-fixed-bottom' : ''}}">
+<view class="container {{book.borrowed_num < book.num? 'has-fixed-bottom' : ''}}">
   <!-- <view class="title">{{book.title}}</view> -->
   <view class="book">
     <image class="img" src="{{book.image}}" />
@@ -11,8 +11,8 @@
       <view><text class="txt01">书架位置：</text>{{book.place}}</view>
       <view class="available" wx:if="{{book.status === 'ONSHELF'}}">
         <text class="txt01">当前可借数量：</text>
-        <text class="green" wx:if="{{book.available_num > 0}}">{{book.available_num}}</text>
-        <text class="red" wx:if="{{book.available_num == 0}}">0</text>
+        <text class="green" wx:if="{{book.borrowed_num < book.num}}">{{book.num - book.borrowed_num}}</text>
+        <text class="red" wx:if="{{book.borrowed_num >= book.num}}">0</text>
       </view>
       <view wx:if="{{book.status && book.status !== 'ONSHELF'}}">
         <text class="txt01">当前状态：</text>
@@ -38,7 +38,7 @@
     <view class="content">{{book.catalog || '无'}}</view>
   </view>
 
-  <view class="btn-box" wx:if="{{book.available_num > 0 && !isBorrowed}}">
+  <view class="btn-box" wx:if="{{book.borrowed_num < book.num && isLogin}}">
     <button class="btn" bindtap="borrowBook">借阅</button>
   </view>
 </view>

@@ -1,0 +1,21 @@
+/* miniprogram/pages/book/not-found/not-found.wxss */
+page {
+  background: #fff;
+}
+
+.img {
+  width: 280px;
+  height:260px;
+  margin-top:20%;
+}
+
+.info {
+  margin-top:30px;
+  font-size:18px;
+  width: 100%;
+  text-align: center;
+}
+.back {
+  text-align: center;
+  color: #3378dd;
+}

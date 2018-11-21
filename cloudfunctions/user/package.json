@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "blueimp-md5": "^2.10.0",
     "tcb-router": "^1.1.2",
     "wx-server-sdk": "latest"
   }

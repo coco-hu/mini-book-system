@@ -1,13 +1,17 @@
 <!--miniprogram/pages/user/edit/edit.wxml-->
 <view class="container has-fixed-bottom">
-  <form class="form-info">
+  <view class="tab-list" wx:if="{{!isEdit}}">
+    <view class="tab {{isMultiAdd? '' : 'current'}}" id="single" bindtap="switchTap">单个添加</view>
+    <view class="tab {{isMultiAdd? 'current' : ''}}" id="multiAdd" bindtap="switchTap">批量添加</view>
+  </view>
+  <form class="form-info" wx:if="{{!isMultiAdd}}">
     <view class='input-item'>
       <text class="input-item-label">用户名</text>
-      <input type="text" id="username" bindblur='onBlur' value="{{user.username}}" class="input-item-text {{isEdit? 'disabled' : ''}}" placeholder='输入用户名' bindblur="onBlur" disabled='{{isEdit}}' />
+      <input type="text" id="username" bindinput='onInput' value="{{user.username}}" class="input-item-text {{isEdit? 'disabled' : ''}}" placeholder='输入用户名' bindinput="onInput" disabled='{{isEdit}}' />
     </view>
     <!-- <view class='input-item'>
       <text class="input-item-label">密码</text>
-      <input type="password" id="password" class="input-item-text" placeholder='输入密码' bindblur="onBlur" />
+      <input type="password" id="password" class="input-item-text" placeholder='输入密码' bindinput="onInput" />
     </view> -->
     <view class='input-item'>
       <text class="input-item-label">类型</text>
@@ -20,12 +24,33 @@
     </view>
     <view class='input-item'>
       <text class="input-item-label">备注</text>
-      <input type="text" id="remark" class="input-item-text" bindblur='onBlur' value="{{user.remark}}" placeholder='备注' />
+      <input type="text" id="remark" class="input-item-text" bindinput='onInput' value="{{user.remark}}" placeholder='备注' />
     </view>
   </form>
-  <view class="btn-box">
-    <button class="btn" wx:if="{{!isEdit}}" bindtap="addUser">添加</button>
+
+  <view  wx:if="{{isMultiAdd}}" class="multi-box">
+    <form class="form-info">
+      <view class='input-item'>
+        <text class="input-item-label">用户名</text>
+        <textarea id="multiUser" class="input-item-area big" value="{{multiUser}}" maxlength="-1" placeholder='输入用户名(多个用户名以“,”隔开)' bindinput="updateMultiUser"></textarea>
+      </view>
+    </form>
+    <view class="info-box" wx:if="{{saveList.length>0}}">
+      <view class="info-type">添加成功：</view>
+      <view class="data-info" wx:for="{{saveList}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+    </view>
+    <view class="info-box" wx:if="{{submitError.length>0}}">
+      <view class="info-type">添加异常：</view>
+      <view class="err-info" wx:for="{{submitError}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="btn-box" wx:if="{{!isMultiAdd}}">
+    <button class="btn" wx:if="{{!isEdit}}" bindtap="singleAdd">添加</button>
     <button class="btn" wx:if="{{isEdit}}" bindtap="editUser">提交</button>
+  </view>
+  <view class="btn-box" wx:if="{{isMultiAdd}}">
+    <button class="btn" bindtap="multiAdd">批量添加</button>    
   </view>
 </view>
 

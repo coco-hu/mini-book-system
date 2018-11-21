@@ -1,4 +1,4 @@
-/* miniprogram/pages/site/login/login.wxss */
+/* miniprogram/pages/site/setting/update-motto/update-motto.wxss */
 page {
   background: #fff;
 }
@@ -9,9 +9,7 @@ page {
   box-sizing:border-box;
   margin: 0 auto;
 }
-.link {
-  text-align: center;
-  padding: 10px;
-  font-size:13px;
-  color: #3378dd;
+.input-item-area02 {
+  width: 80%;
+  margin: 0 auto;
 }

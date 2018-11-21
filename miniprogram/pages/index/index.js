@@ -1,6 +1,5 @@
 // miniprogram/pages/index/index.js
-const myRequest = require('../../api/myRequest')
-
+const localRequest = require('../../api/localRequest')
 const app = getApp()
  
 Page({
@@ -27,6 +26,17 @@ Page({
       })
       return
     }
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+    this.setData({
+      showLoading: false,
+      booklist: [],
+      currentIndex: 0,
+      hasLoadAll: false
+    })
 
     //默认显示图书信息，每次拉取20条
     this.pullBookInfo()
@@ -37,15 +47,15 @@ Page({
    */
   pullBookInfo : function (keyFlag) {
     const UNIT = 10
-    myRequest.call('book', {
-      $url: "search",
+    localRequest.searchBook({
       keyFlag: keyFlag,
       key: this.data.searchKey,
       size: UNIT,
       startIndex: this.data.currentIndex
     }).then(res => {
       console.log(res)
-      let data =  res.list || []
+      let data =  res && res.list || []
+      
       this.setData({
         showLoading: false,
         booklist: this.data.booklist.concat(data),
@@ -71,7 +81,7 @@ Page({
   /**
    * 保存搜索框的值
    */
-  searchBlur: function(e){
+  onInput: function(e){
     this.setData({
       currentSearchKey: e.detail.value
     })
@@ -109,15 +119,17 @@ Page({
    * 扫码识别
    */
   doScan: function () {
-    // wx.navigateTo({
-    //   url: `/pages/book/detail/detail?id=W9GwzZL-scb2MQoo`,
-    // })
-    // return
+    
     wx.scanCode({
       success: (res) => {
-        myRequest.call('book', {
-          $url: "search-isbn",
-          isbn: res.result
+        // wx.navigateTo({
+        //   url: `/pages/book/detail/detail?id=W9GwzZL-scb2MQoo`,
+        // })
+        // return
+
+        let isbn = res.result
+        localRequest.searchIsbn({
+          isbn: isbn
         }).then(res => {
           console.log(res)
           wx.navigateTo({
@@ -125,8 +137,8 @@ Page({
           })
         }).catch(err => {
           console.log(err)
-          wx.showModal({
-            content: err && err.message
+          wx.navigateTo({
+            url: `/pages/book/not-found/not-found`,
           })
         })
       },
