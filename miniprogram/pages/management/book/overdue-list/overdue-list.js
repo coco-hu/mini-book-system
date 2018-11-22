@@ -68,7 +68,8 @@ Page({
         return
       }
       wx.showModal({
-        content: '拉取数据失败',
+        content: err.message,
+        showCancel: false
       })
     })
   }

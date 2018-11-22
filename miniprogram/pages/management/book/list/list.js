@@ -35,7 +35,8 @@ Page({
         booklistLength: 0
       })
       wx.showModal({
-        content: '操作失败'
+        content: err.message,
+        showCancel: false
       })
     })
   },
@@ -66,7 +67,7 @@ Page({
             }
             wx.hideLoading()
             wx.showModal({
-              content: '操作失败',
+              content: err.message,
               showCancel: false
             })
           })

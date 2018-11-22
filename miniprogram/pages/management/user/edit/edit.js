@@ -64,7 +64,8 @@ Page({
       }
       wx.hideLoading()
       wx.showModal({
-        content: '无法拉取用户信息',
+        content: err.message,
+        showCancel: false
       })
     })
   },
@@ -136,7 +137,6 @@ Page({
       }
       wx.hideLoading()
       wx.showModal({
-        title: '提示',
         content: err.message,
         showCancel: false
       })
@@ -211,7 +211,8 @@ Page({
       }
       wx.hideLoading()
       wx.showModal({
-        content: '操作失败',
+        content: err.message,
+        showCancel: false
       })
     })
   },

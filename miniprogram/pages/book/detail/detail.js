@@ -62,6 +62,7 @@ Page({
       }
       wx.showModal({
         content: '无法拉取图书信息',
+        showCancel: false 
       })
     })
   },
@@ -112,6 +113,7 @@ Page({
             wx.hideLoading()
             wx.showModal({
               content: err && err.message || '系统错误，请稍后再试',
+              showCancel: false
             })
           })
         }

@@ -72,7 +72,8 @@ Page({
         showLoading: true
       })
       wx.showModal({
-        content: '无法拉取图书信息',
+        content: err.message,
+        showCancel: false 
       })
     })
 

@@ -75,7 +75,8 @@ Page({
         return
       }
       wx.showModal({
-        content: '无法拉取图书信息',
+        content: err.message,
+        showCancel: false 
       })
     })
   },
@@ -135,12 +136,11 @@ Page({
         'book.catalog': data.catalog
       })
     }).catch(err => {
-      wx.hideLoading()
       console.log(err)
-      return;
+      wx.hideLoading()
       wx.showModal({
-        title: '提示',
         content: err,
+        showCancel: false
       })
       _self.setData({
         showBookInfo: false
@@ -224,7 +224,6 @@ Page({
     }).catch(err => {
       wx.hideLoading()
       wx.showModal({
-        title: '提示',
         content: err.message,
         showCancel: false
       })
@@ -300,7 +299,8 @@ Page({
       }
       wx.hideLoading()
       wx.showModal({
-        content: '操作失败',
+        content: err.message,
+        showCancel: false
       })
     })
   },
@@ -337,7 +337,6 @@ Page({
       }
       wx.hideLoading()
       wx.showModal({
-        title: '提示',
         content: err.message,
         showCancel: false
       })

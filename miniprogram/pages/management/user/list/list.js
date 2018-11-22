@@ -50,7 +50,8 @@ Page({
         return
       }
       wx.showModal({
-        content: '操作失败'
+        content: err.message,
+        showCancel: false
       })
     })
   },

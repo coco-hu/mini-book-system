@@ -47,6 +47,7 @@ Page({
       })
       wx.showModal({
         content: err && err.message,
+        showCancel: false
       })
     })
   },
