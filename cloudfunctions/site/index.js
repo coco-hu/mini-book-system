@@ -7,43 +7,56 @@ cloud.init()
 
 const db = cloud.database()
 const _ = db.command
+const ADMIN_USER = 1
+const COMMON_USER = 0
 
 
 // 云函数入口函数
 exports.main = async (event, context) => {
   const app = new TcbRouter({ event })
 
-  const handleAuth = async (ctx, next) => {
-    try {
-      let result = {}
-      if (event.sessionId) {
-        let currentTime = new Date().getTime() / 1000
-        result = await db.collection('session').where({
-          key: MD5(event.sessionId)
-        }).get()
-        if (result.data && result.data[0] && result.data[0].expireTime >= currentTime) {
-          await next()
+  const checkAuth = (type) => {
+    type = type || 0
+    const handleAuth = async (ctx, next) => {
+      try {
+        let result = {}
+        if (event.sessionId) {
+          let currentTime = new Date().getTime() / 1000
+          result = await db.collection('session').where({
+            key: MD5(event.sessionId),
+          }).get()
+          let userType = result.data && result.data[0] && result.data[0].userType || 0
+          if (type > userType) {
+            ctx.body = {
+              code: 403,
+              message: 'Forbidden',
+              result: result.data
+            }
+          } else if (result.data && result.data[0] && result.data[0].expireTime >= currentTime) {
+            await next()
+          } else {
+            ctx.body = {
+              code: 401,
+              message: 'Unauthorized',
+              result: result.data
+            }
+          }
         } else {
           ctx.body = {
-            code: '101',
-            message: '登录失效',
-            result: result.data
+            code: 401,
+            message: 'Unauthorized',
+            result: result
           }
         }
-      } else {
+        return
+      } catch (e) {
         ctx.body = {
-          code: '101',
-          message: 'sessionId 缺失',
-          result: result
+          code: 500,
+          message: 'Internal Server Error'
         }
       }
-      return
-    } catch (e) {
-      ctx.body = {
-        code: '101',
-        message: '鉴权不通过'
-      }
     }
+    return handleAuth
   }
   
   app.router('login', async (ctx) => {
@@ -75,6 +88,7 @@ exports.main = async (event, context) => {
           data: {
             expireTime: time,
             userId: user._id,
+            userType: user.userType,
             key: mKey
           }
         })
@@ -101,9 +115,8 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: e,
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
@@ -121,14 +134,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('update-password', handleAuth, async (ctx) => {
+  app.router('update-password', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result1 = await db.collection('user').where({
         _id: event.id,
@@ -146,7 +158,7 @@ exports.main = async (event, context) => {
         }
       }else{
         ctx.body = {
-          code: -2,
+          code: 1001,
           data: {},
           message: '当前密码错误'
         }
@@ -154,14 +166,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('update-motto', handleAuth, async (ctx) => {
+  app.router('update-motto', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result = await db.collection('user').doc(event.id).update({
         data: {
@@ -175,9 +186,8 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })

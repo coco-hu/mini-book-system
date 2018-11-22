@@ -1,1 +1,4 @@
 /* miniprogram/pages/user/list/list.wxss */
+.container .table .warn {
+  background-color: #FFE4E1;
+}

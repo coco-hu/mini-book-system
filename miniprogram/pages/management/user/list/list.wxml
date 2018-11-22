@@ -7,15 +7,15 @@
       <view class="th">操作</view>
     </view>
     <block wx:for="{{userlist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item._id}}">
-      <view class="tr">
+      <view class="tr {{currentUser === item._id? 'warn': ''}}">
         <view class="td">{{item.username}}</view>
         <view class="td">
           <text wx:if="{{item.userType == 1}}">管理员</text>
           <text wx:if="{{item.userType != 1}}">普通用户</text>
         </view>
         <view class="td">
-          <button class="btn t-btn" id="{{item._id}}" catchtap="delete">删除</button>
-          <button class="btn t-btn" id="{{item._id}}" catchtap='edit'>编辑</button>
+          <button class="btn t-btn" id="{{item._id}}" catchtap="delete" wx:if="{{currentUser !== item._id}}">删除</button>
+          <button class="btn t-btn" id="{{item._id}}" catchtap='edit' wx:if="{{currentUser !== item._id}}">编辑</button>
         </view>
       </view>
     </block>

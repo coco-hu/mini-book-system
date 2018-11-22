@@ -2,6 +2,8 @@
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
 const MD5 = require("blueimp-md5")
+const ADMIN_USER = 1
+const COMMON_USER = 0
 
 cloud.init()
 
@@ -12,37 +14,48 @@ const _ = db.command
 exports.main = async (event, context) => {
   const app = new TcbRouter({ event })
 
-  const handleAuth = async (ctx, next) => {
-    try {
-      let result = {}
-      if (event.sessionId) {
-        let currentTime = new Date().getTime() / 1000
-        result = await db.collection('session').where({
-          key: MD5(event.sessionId)
-        }).get()
-        if (result.data && result.data[0] && result.data[0].expireTime >= currentTime) {
-          await next()
+  const checkAuth = (type) => {
+    type = type || 0
+    const handleAuth = async (ctx, next) => {
+      try {
+        let result = {}
+        if (event.sessionId) {
+          let currentTime = new Date().getTime() / 1000
+          result = await db.collection('session').where({
+            key: MD5(event.sessionId),
+          }).get()
+          let userType = result.data && result.data[0] && result.data[0].userType || 0
+          if (type > userType){
+            ctx.body = {
+              code: 403,
+              message: 'Forbidden',
+              result: result.data
+            }
+          } else if (result.data && result.data[0] && result.data[0].expireTime >= currentTime) {
+            await next()
+          } else {
+            ctx.body = {
+              code: 401,
+              message: 'Unauthorized',
+              result: result.data
+            }
+          }
         } else {
           ctx.body = {
-            code: '101',
-            message: '登录失效',
-            result: result.data
+            code: 401,
+            message: 'Unauthorized',
+            result: result
           }
         }
-      } else {
+        return
+      }catch(e){
         ctx.body = {
-          code: '101',
-          message: 'sessionId 缺失',
-          result: result
+          code: 500,
+          message: 'Internal Server Error'
         }
       }
-      return
-    }catch(e){
-      ctx.body = {
-        code: '101',
-        message: '鉴权不通过'
-      }
     }
+    return handleAuth
   }
 
   app.router('search', async (ctx) => {
@@ -84,9 +97,8 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
@@ -108,7 +120,7 @@ exports.main = async (event, context) => {
         }
       } else {
         ctx.body = {
-          code: -2,
+          code: 1001,
           data: {},
           message: '该书目不存在'
         }
@@ -117,9 +129,8 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
@@ -144,15 +155,14 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
 
-  app.router('count-sum', handleAuth, async (ctx) => {
+  app.router('count-sum', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let tTime = new Date().getTime() / 1000
 
@@ -182,14 +192,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('borrow-list', handleAuth, async (ctx) => {
+  app.router('borrow-list', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let borrowArr = []
       let bidArr = []
@@ -232,14 +241,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('borrow', handleAuth, async (ctx) => {
+  app.router('borrow', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result = await db.collection('borrow').where({
         bookId: event.borrowData.bookId,
@@ -248,7 +256,7 @@ exports.main = async (event, context) => {
       }).count()
       if (result.total > 0){
         ctx.body = {
-          code : '-2',
+          code : 1001,
           message: '不可重复借阅'
         }
       }else{
@@ -268,14 +276,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('renew', handleAuth, async (ctx) => {
+  app.router('renew', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result = await db.collection('borrow').doc(event.id).update({
         data: {
@@ -290,14 +297,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('return', handleAuth, async (ctx) => {
+  app.router('return', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result1 = await db.collection('borrow').doc(event.borrowId).update({
         data: {
@@ -318,14 +324,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('recommend-list', handleAuth, async (ctx) => {
+  app.router('recommend-list', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let resultData = []
       let bookIdArr = []
@@ -353,14 +358,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('all-recommend-list', handleAuth, async (ctx) => {
+  app.router('all-recommend-list', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let resultData = []
       let bookIdArr = []
@@ -412,14 +416,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('recommend', handleAuth, async (ctx) => {
+  app.router('recommend', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result1 = await db.collection('book').where({
         isbn: event.isbn
@@ -427,7 +430,7 @@ exports.main = async (event, context) => {
 
       if (result1.total > 0) {
         ctx.body = {
-          code: -2,
+          code: 1001,
           data: {},
           message: '该书目已存在/正被推荐'
         }
@@ -452,14 +455,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('recommend-agree', handleAuth, async (ctx) => {
+  app.router('recommend-agree', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).update({
         data: {
@@ -473,14 +475,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('recommend-reject', handleAuth, async (ctx) => {
+  app.router('recommend-reject', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).update({
         data: {
@@ -494,14 +495,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('recommend-on-shelf', handleAuth, async (ctx) => {
+  app.router('recommend-on-shelf', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.id).update({
         data: {
@@ -515,14 +515,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('booklist', handleAuth, async (ctx) => {
+  app.router('booklist', checkAuth(COMMON_USER), async (ctx) => {
     try {
       let result = await db.collection('book').field({
         title: true,
@@ -544,14 +543,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('add', handleAuth, async (ctx) => {
+  app.router('add', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let result1 = await db.collection('book').where({
         isbn: event.isbn
@@ -559,7 +557,7 @@ exports.main = async (event, context) => {
 
       if(result1.total > 0){
         ctx.body = {
-          code: -2,
+          code: 1001,
           data: {},
           message: '该书目已存在'
         }
@@ -575,14 +573,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('edit', handleAuth, async (ctx) => {
+  app.router('edit', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let result = await db.collection('book').doc(event.bookId).update({
         data: event.data
@@ -594,14 +591,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('delete', handleAuth, async (ctx) => {
+  app.router('delete', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let result1 = await db.collection('borrow').where({
         bookId: event.id,
@@ -623,14 +619,13 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
 
-  app.router('overdue-list', handleAuth, async (ctx) => {
+  app.router('overdue-list', checkAuth(ADMIN_USER), async (ctx) => {
     try {
       let bidArr = []
       let userIdArr = []
@@ -689,9 +684,8 @@ exports.main = async (event, context) => {
     } catch (e) {
       console.error(e)
       ctx.body = {
-        code: -1,
-        data: {},
-        message: '请求失败'
+        code: 500,
+        message: 'Internal Server Error'
       }
     }
   })
