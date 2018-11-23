@@ -93,15 +93,16 @@ page {
   box-sizing:border-box;
 }
 .book .img {
-  width: 62px;
-  height: 80px;
+  width: 64px;
+  height: 84px;
   margin: 0 16px;
   position:absolute;
   left:0;
 }
 .book .title {
+  font-size: 16px;
   color: #37a;
-  line-height: 20px;
+  line-height: 22px;
   margin-bottom: 4px;
 }
 

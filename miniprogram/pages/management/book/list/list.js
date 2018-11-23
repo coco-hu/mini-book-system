@@ -17,17 +17,27 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.getBooklist()
+  },
+
+  /**
+   * 获取全部图书列表
+   */
+  getBooklist: function() {
     const db = wx.cloud.database()
     let _self = this
+    wx.showLoading()
     myRequest.call('book', {
       $url: "booklist",
     }).then(res => {
       console.log(res)
+      wx.hideLoading()
       _self.setData({
         booklist: res.list,
         booklistLength: res.list.length
       })
     }).catch(err => {
+      wx.hideLoading()
       if (!app.checkLogin(err.code)) {
         return
       }

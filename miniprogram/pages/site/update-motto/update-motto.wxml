@@ -3,7 +3,7 @@
   <view class="logo-box"><image class="logo" src="/images/logo.png"></image></view>
   <form class="form-info">
     <view class='input-item input-item02'>
-      <textarea id="motto" class="input-item-area input-item-area02" value="{{user.motto}}" placeholder='输入座右铭' bindinput="onInput" maxlength='50'></textarea>
+      <textarea id="motto" class="input-item-area input-item-area02" value="{{user.motto}}" placeholder='输入座右铭(不超过60字)' bindinput="onInput" maxlength='60'></textarea>
     </view>
   </form>
   <view class="form-btn">

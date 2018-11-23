@@ -66,15 +66,15 @@
     </form>
     <view class="info-box" wx:if="{{saveList.length>0}}">
       <view class="info-type">保存成功：</view>
-      <view class="data-info" wx:for="{{saveList}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+      <view class="data-info" wx:for="{{saveList}}" wx:for-item="item" wx:for-index="idx" wx:key="{{item}}">{{item}}</view>
     </view>
     <view class="info-box" wx:if="{{searchError.length>0}}">
       <view class="info-type">搜索图书信息错误：</view>
-      <view class="err-info" wx:for="{{searchError}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+      <view class="err-info" wx:for="{{searchError}}" wx:for-item="item" wx:for-index="idx" wx:key="{{item}}">{{item}}</view>
     </view>
     <view class="info-box" wx:if="{{submitError.length>0}}">
       <view class="info-type">保存异常：</view>
-      <view class="err-info" wx:for="{{submitError}}" wx:for-item="item" wx:for-index="idx">{{item}}</view>
+      <view class="err-info" wx:for="{{submitError}}" wx:for-item="item" wx:for-index="idx" wx:key="{{item}}">{{item}}</view>
     </view>
   </view>
   <view class="btn-box" wx:if="{{!isMultiAdd}}">
@@ -85,4 +85,7 @@
   <view class="btn-box" wx:if="{{isMultiAdd}}">
     <button class="btn" wx:if="{{!isEdit && !isRecommend}}" bindtap="multiAdd">批量添加</button>    
   </view>
+</view>
+<view>
+  <float-tool float-type="camera" bind:scan="doScan"></float-tool>
 </view>

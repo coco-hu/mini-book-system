@@ -24,5 +24,5 @@
 </view>
 
 <view>
-  <float-add link-url="/pages/management/user/edit/edit"></float-add>
+  <float-tool link-url="/pages/management/user/edit/edit"></float-tool>
 </view>

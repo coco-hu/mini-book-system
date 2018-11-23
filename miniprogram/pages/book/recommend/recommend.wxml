@@ -14,7 +14,7 @@
       </view>
     </view>
   </view>
-  <float-add link-url="/pages/management/book/edit/edit?type=recommend"></float-add>
+  <float-tool link-url="/pages/management/book/edit/edit?type=recommend"></float-tool>
 </view>
 
 <view class="container" wx:if="{{booklistLength === 0}}">

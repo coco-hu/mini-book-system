@@ -60,8 +60,13 @@
 
   <view class="my-list" wx:if="{{userInfo.isAdmin}}">
     <view class="item" id="recommend-list" bindtap="toPage">
-      <em class="icon iconfont icon-danju-xianxing dark-orange"></em>
+      <em class="icon iconfont icon-tasklist dark-orange"></em>
       <text class="txt">用户推荐</text>
+      <i class="arrow iconfont icon-enter"></i>
+    </view>
+    <view class="item" id="all-borrow-list" bindtap="toPage">
+      <em class="icon iconfont icon-danju-xianxing dark-orange"></em>
+      <text class="txt">借阅列表</text>
       <i class="arrow iconfont icon-enter"></i>
     </view>
     <view class="item" id="overdue-list" bindtap="toPage">

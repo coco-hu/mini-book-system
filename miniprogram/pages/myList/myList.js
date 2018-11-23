@@ -127,6 +127,9 @@ Page({
       case 'overdue-list':
         url = `/pages/management/book/overdue-list/overdue-list`
         break
+      case 'all-borrow-list':
+        url = '/pages/management/book/borrow-list/borrow-list'
+        break
     }
     console.log(url)
     wx.navigateTo({

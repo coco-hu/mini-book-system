@@ -18,7 +18,7 @@ Page({
   data: {
     userTypeList:['普通用户', '管理员'],
     user: {},
-    multiUser: 'aa,bb,cc,qq,ss,ff,hh,jj,ii,77,88'
+    multiUser: ''
   },
 
   /**
@@ -229,6 +229,7 @@ Page({
     wx.showLoading()
     Promise.all(
       users.map(item => {
+        item = item.trim()
         if(!item){
           return;
         }
@@ -242,6 +243,27 @@ Page({
     }).catch(err => {
       console.log(err)
       wx.hideLoading()
+    })
+  },
+  
+  /**
+   * 扫码识别
+   */
+  doScan: function () {
+    let _self = this
+    wx.scanCode({
+      success: (res) => {
+        let isbn = res.result
+        this.setData({
+          'book.isbn': isbn
+        })
+        this.search();
+      },
+      fail: (err) => {
+        wx.showToast({
+          title: err
+        })
+      }
     })
   }
 })

@@ -1,27 +1,28 @@
-/* components/float-add/float-add.wxss */
+/* components/float-tool/float-tool.wxss */
 @import '/style/font.wxss';
 .float-view {
   position:fixed;
-  height:54px;
-  width:54px;
+  height:58px;
+  width:58px;
   border-radius:2rem;
   background:#fff;
   color:white;
   text-align:center;
   line-height:60px;
   box-shadow:0px 1px 12px 2px rgba(0,0,0,0.2);
+  z-index: 999;
 }
 
 .float-add {
-  font-size:36px;
+  font-size:38px;
   color:#696969;
   opacity:0.9;
-  line-height:54px;
+  line-height:58px;
 }
 
 .float-camera {
   font-size:28px;
   color:#696969;
   opacity:0.7;
-  line-height:56px;
+  line-height:60px;
 }

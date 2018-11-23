@@ -10,15 +10,15 @@
 }
 .book {
   min-width: 134px;
-  padding-left: 114px;
+  padding-left: 120px;
 }
 .book .img {
-  width: 84px;
-  height: 106px;
+  width: 90px;
+  height: 116px;
 }
 .book .info {
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 20px;
 }
 .book .info .txt01 {
   color: #666666;
@@ -30,14 +30,15 @@
   width:100%;
 }
 .sections .sec-title {
+  font-size:16px;
   padding: 0 14px;
-  line-height: 36px;
-  height: 36px;
+  line-height: 40px;
+  height: 40px;
   border-bottom: 1px solid #F0F0F0;
 }
 .sections .content {
   padding:12px 14px;
-  font-size:13px;
-  line-height:22px;
+  font-size:14px;
+  line-height:24px;
   white-space: pre-wrap;
 }

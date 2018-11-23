@@ -4,7 +4,7 @@
     <view class="tr head">
       <view class="th enlarge">书名/作者</view>
       <view class="th">逾期天数/借书人</view>
-      <view class="th">操作</view>
+      <!-- <view class="th">操作</view> -->
     </view>
     <block wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item._id}}">
       <view class="tr" id="{{item.bookId}}" bindtap="toDetail">
@@ -16,9 +16,9 @@
           <text class="txt01 red">{{item.overdue_days}} 天</text>
           <text class="txt02">{{item.username}}</text>
         </view>
-        <view class="td">
+        <!-- <view class="td">
           <button class="btn t-btn" id="{{item._id}}" catchtap="remind">提醒</button>
-        </view>
+        </view> -->
       </view>
     </block>
     <view class="tr" wx:if="{{booklistLength === 0}}">暂无数据</view>

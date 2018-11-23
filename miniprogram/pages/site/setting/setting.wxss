@@ -1,5 +1,8 @@
 /* miniprogram/pages/site/update-password/update-password.wxss */
 
+.container {
+  font-size:  16px;
+}
 .my-list {
   display: flex;
   flex-direction: column;

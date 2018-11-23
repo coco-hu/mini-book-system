@@ -1,6 +1,6 @@
 {
   "usingComponents": {
-    "float-add": "/components/float-add/float-add"
+    "float-tool": "/components/float-tool/float-tool"
   },
   "navigationBarTitleText": "图书管理"
 }

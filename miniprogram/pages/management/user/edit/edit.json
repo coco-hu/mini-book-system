@@ -1,3 +1,6 @@
 {
+  "usingComponents": {
+    "float-tool": "/components/float-tool/float-tool"
+  },
   "navigationBarTitleText": "添加用户"
 }

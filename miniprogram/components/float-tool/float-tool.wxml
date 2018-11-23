@@ -1,4 +1,4 @@
-<!--components/float-add/float-add.wxml-->
+<!--components/float-tool/float-tool.wxml-->
 <view  class="float-view" style=" top:{{top}}px;left:{{left}}px;margin: 0 0rpx 0rpx 0%;" catchtouchmove="setTouchMove" bindtap='tabFloat'>
   <em wx:if="{{floatType === 'add'}}" class="iconfont icon-add float-add"></em>
   <em wx:if="{{floatType === 'camera'}}" class="iconfont icon-camera float-camera"></em>
