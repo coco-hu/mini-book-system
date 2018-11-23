@@ -26,7 +26,7 @@ exports.main = async (event, context) => {
             key: MD5(event.sessionId),
           }).get()
           let userType = result.data && result.data[0] && result.data[0].userType || 0
-          if (type > userType) {
+          if (result.data && result.data[0] && type > userType) {
             ctx.body = {
               code: 403,
               message: 'Forbidden',

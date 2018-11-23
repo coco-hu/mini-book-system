@@ -1,0 +1,19 @@
+<!--miniprogram/pages/management/book/borrow-list/borrow-list.wxml-->
+<view class="container">
+  <view class="table">
+    <view class="tr head">
+      <view class="th enlarge">书名/作者</view>
+      <view class="th">借书人</view>
+    </view>
+    <block wx:for="{{booklist}}" wx:for-index="idx" wx:for-item="item" wx:key="{{item._id}}">
+      <view class="tr" id="{{item.bookId}}" bindtap="toDetail">
+        <view class="td enlarge">
+          <text class="txt01 ellipsis">{{item.title}}</text>
+          <text class="txt02 ellipsis">{{item.author}}</text>
+        </view>
+        <view class="td">{{item.username}}</view>
+      </view>
+    </block>
+    <view class="tr" wx:if="{{booklistLength === 0}}">暂无数据</view>
+  </view>
+</view>

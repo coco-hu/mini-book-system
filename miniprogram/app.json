@@ -16,7 +16,8 @@
     "pages/site/setting/setting",
     "pages/site/update-password/update-password",
     "pages/site/update-motto/update-motto",
-    "pages/book/not-found/not-found"
+    "pages/book/not-found/not-found",
+    "pages/management/book/borrow-list/borrow-list"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

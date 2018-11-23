@@ -25,7 +25,7 @@ exports.main = async (event, context) => {
             key: MD5(event.sessionId),
           }).get()
           let userType = result.data && result.data[0] && result.data[0].userType || 0
-          if (type > userType){
+          if (result.data && result.data[0] && type > userType){
             ctx.body = {
               code: 403,
               message: 'Forbidden',
@@ -675,6 +675,68 @@ exports.main = async (event, context) => {
         })
       }
      
+      ctx.body = {
+        code: 0,
+        data: {
+          list: borrowArr
+        }
+      }
+    } catch (e) {
+      console.error(e)
+      ctx.body = {
+        code: 500,
+        message: 'Internal Server Error'
+      }
+    }
+  })
+
+  app.router('all-borrow-list', checkAuth(ADMIN_USER), async (ctx) => {
+    try {
+      let bidArr = []
+      let userIdArr = []
+      let userArr = []
+      let borrowArr = []
+      let bookArr = []
+
+      let result1 = await db.collection('borrow').where({
+        status: 0
+      }).get()
+
+      borrowArr = result1.data
+      for (let i = 0; i < borrowArr.length; i++) {
+        bidArr.push(borrowArr[i].bookId)
+        userIdArr.push(borrowArr[i].userId)
+      }
+
+      if (bidArr.length > 0 && userIdArr.length > 0) {
+        let result2 = await db.collection('user').where({
+          _id: _.in(userIdArr)
+        }).field({
+          _id: true,
+          username: true
+        }).get()
+        let result3 = await db.collection('book').where({
+          _id: _.in(bidArr),
+        }).get()
+
+        let userArr = result2.data
+        let bookArr = result3.data
+        borrowArr = borrowArr.map(item => {
+          let data = {}
+          for (let i = 0; i < userArr.length; i++) {
+            if (item.userId === userArr[i]._id) {
+              Object.assign(data, userArr[i], item)
+            }
+          }
+          for (let i = 0; i < bookArr.length; i++) {
+            if (item.bookId === bookArr[i]._id) {
+              Object.assign(data, bookArr[i], item)
+            }
+          }
+          return data
+        })
+      }
+
       ctx.body = {
         code: 0,
         data: {
