@@ -14,7 +14,6 @@ page {
 }
 .link {
   text-align: center;
-  padding: 10px;
-  font-size:13px;
+  padding: 14px;
   color: #3378dd;
 }

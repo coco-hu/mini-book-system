@@ -15,6 +15,11 @@
     </view>
   </view>
   <float-tool link-url="/pages/management/book/edit/edit?type=recommend"></float-tool>
+  <view class="loader-more" wx-if="{{showLoading}}">
+    <image class="loader" src="/images/loader.gif" />
+    正在加载更多
+  </view>
+  <view class="loader-finished" wx-if="{{hasLoadAll && booklistLength}}">已加载全部</view>
 </view>
 
 <view class="container" wx:if="{{booklistLength === 0}}">

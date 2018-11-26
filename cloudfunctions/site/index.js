@@ -1,11 +1,16 @@
 // 云函数入口文件
+let isTest = false
+let options = {
+  env: isTest ? "test-c3b399" : ''
+}
+
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
 const MD5 = require("blueimp-md5")
 
 cloud.init()
 
-const db = cloud.database()
+const db = cloud.database(options)
 const _ = db.command
 const ADMIN_USER = 1
 const COMMON_USER = 0

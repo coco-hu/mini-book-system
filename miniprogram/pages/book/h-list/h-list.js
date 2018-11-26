@@ -12,6 +12,8 @@ Page({
   data: {
     booklist: [],
     booklistLength: '',
+    currentIndex: 0,
+    hasLoadAll: false,
     pageType: 'current'
   },
 
@@ -31,6 +33,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.setData({
+      booklist: [],
+      booklistLength: '',
+      currentIndex: 0,
+      hasLoadAll: false,
+    })
     this.getBorrowList()
   },
 
@@ -38,24 +46,37 @@ Page({
    * 获取统计信息
    */
   getBorrowList: function () {
+    const UNIT = 100
     let _self = this
     let _type = this.data.pageType
     let userId = wx.getStorageSync('userId')
 
-    wx.showLoading()
+    this.setData({
+      showLoading: true
+    })
     myRequest.call('book', {
       $url: "borrow-list",
+      size: UNIT,
+      startIndex: this.data.currentIndex,
       userId: userId,
       status: _type === 'current' ? 0 : 1
     }).then(res => {
-      wx.hideLoading()
       console.log('===', res)
+      let data = res && res.list || []
+      let booklist = this.data.booklist.concat(data)
+
       _self.setData({
-        booklist: res.list,
-        booklistLength: res.list.length
+        showLoading: false,
+        booklist: booklist,
+        booklistLength: booklist.length,
+        currentIndex: this.data.currentIndex + UNIT
       })
+      if (!data || data.length < UNIT) {
+        this.setData({
+          hasLoadAll: true
+        })
+      }
     }).catch(err => {
-      wx.hideLoading()
       if (!app.checkLogin(err.code)) {
         return
       }
@@ -159,6 +180,17 @@ Page({
     wx.navigateTo({
       url: `/pages/book/detail/detail?id=${e.currentTarget.id}`,
     })
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+    if (this.data.hasLoadAll) {
+      return false
+    }
+
+    this.getBooklist()
   }
 
 })

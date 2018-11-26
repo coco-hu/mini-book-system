@@ -1,5 +1,9 @@
-
-const db = wx.cloud.database()
+const config = require('../config/index')
+const isTest = config.isTest
+let options = {
+  env: isTest ? 'test-c3b399' : ''
+}
+const db = wx.cloud.database(options)
 const _ = db.command
 
 let searchBook = (event) => {

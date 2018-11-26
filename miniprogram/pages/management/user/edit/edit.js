@@ -228,14 +228,16 @@ Page({
     })
     wx.showLoading()
     Promise.all(
-      users.map(item => {
+      users.map((item, i) => {
         item = item.trim()
         if(!item){
           return;
         }
         let aData = JSON.parse(JSON.stringify(defaultUser))
         aData.username = item
-        this.addUser(aData)
+        setTimeout(() => {
+          this.addUser(aData)
+        }, i * 20 * Math.sqrt(i))
       })
     ).then(res => {
       console.log(res)

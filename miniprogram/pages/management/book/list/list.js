@@ -10,13 +10,21 @@ Page({
    */
   data: {
     booklist: [],
-    booklistLength: ''
+    booklistLength: '',
+    currentIndex: 0,
+    hasLoadAll: false,
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.setData({
+      booklist: [],
+      booklistLength: '',
+      currentIndex: 0,
+      hasLoadAll: false,
+    })
     this.getBooklist()
   },
 
@@ -24,20 +32,36 @@ Page({
    * 获取全部图书列表
    */
   getBooklist: function() {
+    const UNIT = 100
     const db = wx.cloud.database()
     let _self = this
-    wx.showLoading()
+
+    this.setData({
+      showLoading: true
+    })
     myRequest.call('book', {
       $url: "booklist",
+      size: UNIT,
+      startIndex: this.data.currentIndex
     }).then(res => {
       console.log(res)
-      wx.hideLoading()
+
+      let data = res && res.list || []
+      let booklist = this.data.booklist.concat(data)
+
       _self.setData({
-        booklist: res.list,
-        booklistLength: res.list.length
+        showLoading: false,
+        booklist: booklist,
+        booklistLength: booklist.length,
+        currentIndex: this.data.currentIndex + UNIT
       })
+      if (!data || data.length < UNIT) {
+        this.setData({
+          hasLoadAll: true
+        })
+      }
+
     }).catch(err => {
-      wx.hideLoading()
       if (!app.checkLogin(err.code)) {
         return
       }
@@ -95,4 +119,14 @@ Page({
     })
   },
 
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+    if (this.data.hasLoadAll) {
+      return false
+    }
+
+    this.getBooklist()
+  }
 })

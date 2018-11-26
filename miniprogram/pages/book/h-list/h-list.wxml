@@ -25,4 +25,9 @@
     </block>
     <view class="tr" wx:if="{{booklistLength === 0}}">暂无数据</view>
   </view>
+  <view class="loader-more" wx-if="{{showLoading}}">
+    <image class="loader" src="/images/loader.gif" />
+    正在加载更多
+  </view>
+  <view class="loader-finished" wx-if="{{hasLoadAll && booklistLength}}">已加载全部</view>
 </view>

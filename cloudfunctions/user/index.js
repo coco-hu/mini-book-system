@@ -1,4 +1,8 @@
 // 云函数入口文件
+let isTest = false
+let options = {
+  env: isTest ? "test-c3b399" : ''
+}
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
 const MD5 = require("blueimp-md5")
@@ -7,7 +11,7 @@ const COMMON_USER = 0
 
 cloud.init()
 
-const db = cloud.database()
+const db = cloud.database(options)
 const _ = db.command
 
 // 云函数入口函数
@@ -60,7 +64,9 @@ exports.main = async (event, context) => {
 
   app.router('list', checkAuth(ADMIN_USER), async (ctx) => {
     try {
-      let result = await db.collection('user').field({
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+      let result = await db.collection('user').skip(startIndex).limit(size).field({
         username: true,
         userType: true,
         _id: true

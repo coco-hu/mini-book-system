@@ -118,6 +118,25 @@ page {
   border-radius: 100px;
 }
 
+.loader-more {
+  line-height: 20px;
+  text-align: center;
+  padding: 6px 0;
+  color: gray;
+}
+.loader-more .loader {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  vertical-align: top;
+}
+.loader-finished {
+  line-height: 20px;
+  text-align: center;
+  padding: 6px 0;
+  color: gray;
+}
+
 .green {
   color: #009C00 !important;
 }

@@ -1,4 +1,9 @@
 // 云函数入口文件
+let isTest = false
+let options = {
+  env: isTest? "test-c3b399" : ''
+}
+
 const cloud = require('wx-server-sdk')
 const TcbRouter = require('tcb-router')
 const MD5 = require("blueimp-md5")
@@ -7,7 +12,7 @@ const COMMON_USER = 0
 
 cloud.init()
 
-const db = cloud.database()
+const db = cloud.database(options)
 const _ = db.command
 
 // 云函数入口函数
@@ -57,83 +62,6 @@ exports.main = async (event, context) => {
     }
     return handleAuth
   }
-
-  app.router('search', async (ctx) => {
-    let records = db.collection('book')
-    if (event.keyFlag) {
-      let key = event.key
-      records = records.where(_.or([{
-        title: key
-      }, {
-        author: key
-      }, {
-        isbn10: key
-      }, {
-        isbn13: key
-      }]))
-    }
-    if (event.startIndex) {
-      records = records.skip(event.startIndex)
-    }
-    try {
-      let result = await records.limit(event.size).where({
-        status: _.in(['ONSHELF'])
-      }).field({
-        author: true,
-        image: true,
-        title: true,
-        _id: true,
-        isbn13: true,
-        num: true,
-        borrowed_num: true
-      }).get()
-
-      ctx.body = {
-        code: 0,
-        data: {
-          list:result.data
-        }
-      }
-    } catch (e) {
-      console.error(e)
-      ctx.body = {
-        code: 500,
-        message: 'Internal Server Error'
-      }
-    }
-  })
-
-  app.router('search-isbn', async (ctx) => {
-    try {
-      let result = await db.collection('book').where(_.or([{
-        isbn10: event.isbn
-      }, {
-        isbn13: event.isbn
-      }])).get()
-
-      if (result.data && result.data.length > 0 && result.data[0]._id){
-        ctx.body = {
-          code: 0,
-          data: {
-            id: result.data[0]._id
-          }
-        }
-      } else {
-        ctx.body = {
-          code: 1001,
-          data: {},
-          message: '该书目不存在'
-        }
-      }
-      
-    } catch (e) {
-      console.error(e)
-      ctx.body = {
-        code: 500,
-        message: 'Internal Server Error'
-      }
-    }
-  })
 
   app.router('detail', async (ctx) => {
     try {
@@ -203,7 +131,11 @@ exports.main = async (event, context) => {
       let borrowArr = []
       let bidArr = []
       let resultData = []
-      let result = await db.collection('borrow').where({
+
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+
+      let result = await db.collection('borrow').skip(startIndex).limit(size).where({
         userId: event.userId,
         status: event.status
       }).get()
@@ -334,7 +266,11 @@ exports.main = async (event, context) => {
     try {
       let resultData = []
       let bookIdArr = []
-      let result1 = await db.collection('recommend').where({
+
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+
+      let result1 = await db.collection('recommend').skip(startIndex).limit(size).where({
         userId: event.userId,
       }).get()
 
@@ -370,8 +306,11 @@ exports.main = async (event, context) => {
       let bookIdArr = []
       let userIdArr = []
       let recommendArr = []
-      
-      let result1 = await db.collection('recommend').get()
+
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+
+      let result1 = await db.collection('recommend').skip(startIndex).limit(size).get()
       recommendArr = result1.data
       for (let i = 0; i < recommendArr.length; i++) {
         bookIdArr.push(recommendArr[i].bookId)
@@ -523,7 +462,9 @@ exports.main = async (event, context) => {
 
   app.router('booklist', checkAuth(COMMON_USER), async (ctx) => {
     try {
-      let result = await db.collection('book').field({
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+      let result = await db.collection('book').skip(startIndex).limit(size).field({
         title: true,
         author: true,
         _id: true
@@ -634,7 +575,10 @@ exports.main = async (event, context) => {
       let bookArr = []
       let tTime = new Date().getTime() / 1000
 
-      let result1 = await db.collection('borrow').where({
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+
+      let result1 = await db.collection('borrow').skip(startIndex).limit(size).where({
         status: 0,
         expire_time: _.lt(tTime)
       }).get()
@@ -698,7 +642,9 @@ exports.main = async (event, context) => {
       let borrowArr = []
       let bookArr = []
 
-      let result1 = await db.collection('borrow').where({
+      let startIndex = event.startIndex || 0
+      let size = event.size || 100
+      let result1 = await db.collection('borrow').skip(startIndex).limit(size).where({
         status: 0
       }).get()
 

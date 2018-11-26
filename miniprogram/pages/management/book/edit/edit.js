@@ -2,6 +2,7 @@
 
 let utils = require('../../../../utils/utils')
 const myRequest = require('../../../../api/myRequest')
+const localRequest = require('../../../../api/localRequest')
 const app = getApp();
 
 Page({
@@ -57,8 +58,7 @@ Page({
     let _self = this
 
     wx.showLoading()
-    myRequest.call('book', {
-      $url: "detail",
+    localRequest.getBookDetail({
       id: id
     }).then(res => {
       console.log(res)
@@ -355,12 +355,14 @@ Page({
     })
     wx.showLoading()
     Promise.all(
-      isbns.map(item => {
+      isbns.map((item, i) => {
         item = item.trim()
         if (!item) {
           return;
         }
-        this.getBookDetail(item)
+        setTimeout(() => {
+          this.getBookDetail(item)
+        }, i * 20 * Math.sqrt(i))
       })
     ).then(res=> {
       console.log(res)

@@ -10,7 +10,9 @@ Page({
    */
   data: {
     userlist: [],
-    userlistLength: ''
+    userlistLength: '',
+    currentIndex: 0,
+    hasLoadAll: false,
   },
 
   /**
@@ -19,7 +21,11 @@ Page({
   onShow: function () {
     let currentUser = wx.getStorageSync('userId')
     this.setData({
-      currentUser: currentUser
+      currentUser: currentUser,
+      userlist: [],
+      userlistLength: '',
+      currentIndex: 0,
+      hasLoadAll: false,
     })
     this.getUserList()
   },
@@ -28,21 +34,36 @@ Page({
    * 拉取用户列表
    */
   getUserList: function() {
+    const UNIT = 100
     let _self = this
 
-    wx.showLoading()
+    this.setData({
+      showLoading: true
+    })
     myRequest.call('user', {
-      $url: "list"
+      $url: "list",
+      size: UNIT,
+      startIndex: this.data.currentIndex
     }).then(res => {
       console.log(res)
-      wx.hideLoading()
-      _self.setData({
-        userlist: res.list,
-        userlistLength: res.list.length
+
+      let data = res && res.list || []
+      let userlist = this.data.userlist.concat(data)
+
+      this.setData({
+        showLoading: false,
+        userlist: userlist,
+        userlistLength: userlist.length,
+        currentIndex: this.data.currentIndex + UNIT
       })
+      if (!data || data.length < UNIT) {
+        this.setData({
+          hasLoadAll: true
+        })
+      }
+
     }).catch(err => {
       console.log(err)
-      wx.hideLoading()
       _self.setData({
         userlistLength: 0
       })
@@ -97,6 +118,16 @@ Page({
     wx.navigateTo({
       url: `../edit/edit?id=${e.currentTarget.id}`,
     })
-  }
+  },
 
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+    if (this.data.hasLoadAll) {
+      return false
+    }
+    
+    this.getUserList()
+  }
 })

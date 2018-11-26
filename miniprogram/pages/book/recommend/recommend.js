@@ -10,13 +10,22 @@ Page({
    */
   data: {
     booklist: [],
-    booklistLength: ''
+    booklistLength: '',
+    currentIndex: 0,
+    hasLoadAll: false,
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    this.setData({
+      booklist: [],
+      booklistLength: '',
+      currentIndex: 0,
+      hasLoadAll: false,
+    })
+    wx.showLoading()
     this.getRecommendList();
   },
 
@@ -24,19 +33,36 @@ Page({
    * 获取推荐列表
    */
   getRecommendList: function () {
+    const UNIT = 100
     let _self = this
     let userId = wx.getStorageSync('userId')
-    wx.showLoading()
+
+    this.setData({
+      showLoading: true
+    })
     myRequest.call('book', {
       $url: "recommend-list",
+      size: UNIT,
+      startIndex: this.data.currentIndex,
       userId: userId,
     }).then(res => {
       console.log(res)
       wx.hideLoading()
+
+      let data = res && res.list || []
+      let booklist = this.data.booklist.concat(data)
+
       _self.setData({
-        booklist: res.list,
-        booklistLength: res.list.length
+        showLoading: false,
+        booklist: booklist,
+        booklistLength: booklist.length,
+        currentIndex: this.data.currentIndex + UNIT
       })
+      if (!data || data.length < UNIT) {
+        this.setData({
+          hasLoadAll: true
+        })
+      }
     }).catch(err => {
       console.error(err)
       wx.hideLoading()
@@ -70,6 +96,17 @@ Page({
     wx.navigateTo({
       url: `/pages/book/detail/detail?id=${e.currentTarget.id}`,
     })
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+    if (this.data.hasLoadAll) {
+      return false
+    }
+
+    this.getBooklist()
   }
   
 })
