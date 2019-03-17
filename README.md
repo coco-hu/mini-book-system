@@ -4,7 +4,6 @@
 
 ## 主要功能图
 
-### 首页（搜索页）
 <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/search_page.jpeg"/> <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/detail.jpeg"/> <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/login_page.png"/> <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/my_page.jpeg"/>
 
 ## 参考文档
