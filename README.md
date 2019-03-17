@@ -1,12 +1,13 @@
-# 云开发 quickstart
+# 图书管理小程序
 
-这是云开发的快速启动指引，其中演示了如何上手使用云开发的三大基础能力：
+使用了小程序云开发解决方案
 
-- 数据库：一个既可在小程序前端操作，也能在云函数中读写的 JSON 文档型数据库
-- 文件存储：在小程序前端直接上传/下载云端文件，在云开发控制台可视化管理
-- 云函数：在云端运行的代码，微信私有协议天然鉴权，开发者只需编写业务逻辑代码
+## 主要功能图
+
+### 首页（搜索页）
+<img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/search_page.jpeg"/> <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/detail.jpeg"/> <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/login_page.png"/> <img width="300" height="600" src="https://github.com/coco-hu/mini-book-system/blob/master/app_images/my_page.jpeg"/>
 
 ## 参考文档
 
-- [云开发文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
+- [云开发文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html"/>
 
